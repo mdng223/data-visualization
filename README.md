@@ -5,8 +5,11 @@
 
 # Data
 ### Data is extremely small in scale right now due to the foundation of this web application still being worked on.
-- Will have Users
-- Finance data
+- Users
+- Loans
+- 401k
+- Roth
+- HSA
 
 
 
