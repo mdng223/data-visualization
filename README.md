@@ -4,7 +4,7 @@
 - This will act as a solid base foundation to strengthen my development skills in terms of implementing and experimenting with various development tools. 
 
 # Data
-### Data is extremely small in scale right now due to the foundation of this web application still being worked on.
+### Data is extremely small in scale right now due to the foundation of this web application still being worked on. Starting with financial data.
 - Users
 - Loans
 - 401k
