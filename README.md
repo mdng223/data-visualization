@@ -40,7 +40,7 @@
 
 * Converting all my server side rendered pages to client side rendered pages
 * Making all the necessary components
-* Keeping the backend simple
+* Keeping the backend simple. Will handle querying data pretty much. 
 
 ## Future Works
 * Incorporating [D3](https://d3js.org/) aka Data-Driven-Documents for data visualization once my data scales.
