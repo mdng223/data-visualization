@@ -44,4 +44,4 @@
 
 ## Future Works
 * Incorporating [D3](https://d3js.org/) aka Data-Driven-Documents for data visualization once my data scales.
-* I will add data sciency techniques once I learn them to prove my compentancy down the road.
+* I will add data sciency techniques once I learn them to prove compentancy down the road.
