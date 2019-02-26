@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1>Getting Started with Vue.js in .NET Core</h1>
+<div id="position">
+    <p>
+        <label>Position Name</label>
+        <input type="text" placeholder="Enter your full name" v-model="PositionName" />
+    </p>
+
+    <p>
+        <label>Symbol</label>
+        <input type="text" placeholder="Enter your symbol" v-model="Symbol" />
+    </p>
+
+    <p>
+        <label>DateAdded</label>
+        <textarea rows="10" placeholder="" v-model="DateAdded"></textarea>
+    </p>
+
+    <div id="form-buttons">
+        <button type="button" class="danger">Reset Form</button>
+        <button type="button" class="success" ref="SubmitButton">Submit Form</button> 
+    </div>
+
+{{ info }}
+</div>
+@section Scripts {
+     <script type="text/javascript" src="~/js/position.js"></script>
+}
