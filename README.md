@@ -19,9 +19,9 @@
 * [Bootstrap 4](https://getbootstrap.com/docs/4.0/getting-started/introduction/) -  HTML, CSS, and JS framework for developing responsive, mobile first projects on the web.
 * [Microsoft SQLServer](https://www.microsoft.com/en-us/sql-server/default.aspx) - relational database management system.
 * [Vue.js](https://vuejs.org/) - open-source JavaScript framework for building user interfaces and single-page applications.
-* [Vue Router] (https://router.vuejs.org/) - Client side router used in conjunction with Vue.js. I opted to use this for quicker and smoother routing between views. 
-* [Entity Framework] (https://en.wikipedia.org/wiki/Entity_Framework) -  object-relational mapping (ORM) framework for .NET. I opted to use this over using SPROCS because it's easier to query and I don't have complex data queries as of yet. 
-* [Axios.js] (https://www.npmjs.com/package/axios) - Library used to make HTTP requests and for its use of Promises
+* [Vue Router](https://router.vuejs.org/) - Client side router used in conjunction with Vue.js. I opted to use this for quicker and smoother routing between views. 
+* [Entity Framework](https://en.wikipedia.org/wiki/Entity_Framework) -  object-relational mapping (ORM) framework for .NET. I opted to use this over using SPROCS because it's easier to query and I don't have complex data queries as of yet. 
+* [Axios.js](https://www.npmjs.com/package/axios) - Library used to make HTTP requests and for its use of Promises
 
 
 ## Authors
