@@ -4,7 +4,7 @@
 - This will act as a base foundation to strengthen my development skills in terms of implementing and experimenting with various development tools. 
 
 # Data
-### The type of data this application can handle is extremely small in scale right now due to the foundation of this web application being a work in progress. Starting with financial data.
+### The types of data this application can handle is extremely small in scale right now due to the foundation of this web application being a work in progress. Starting with financial data.
 - Users
 - Loans
 - 401k
