@@ -25,7 +25,7 @@
 
 * I opted to use .NET to prove that I am competant in being able to work with this framework, as it is in demand
 * I think a Javascript backend framework would be better because I would not be limited on front-end impplementation. 
-* I am not able to use [Vuex], [Babel/Polyfill](https://babeljs.io/docs/en/babel-polyfill), [WebPack](https://webpack.js.org/), and other libraries because of this. 
+* I am not able to use [Vuex](https://vuex.vuejs.org/), [Babel/Polyfill](https://babeljs.io/docs/en/babel-polyfill), [WebPack](https://webpack.js.org/), and other libraries because of this. 
 * Not spending too much time on backend data validation because the data isn't super sensitive and front-end data validation is superior for user experience
 
 ## Currently Working on
