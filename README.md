@@ -1,8 +1,7 @@
 # data-visualization
 
-- This project in the simplest of terms will be a CRUD web application and data warehouse for personal needs
+- This project in the simplest of terms will be a CRUD web application and data warehouse for personal needs of any user
 - This will act as a solid base foundation to strengthen my development skills in terms of implementing and experimenting with various development tools. 
-
 
 # Data
 - Data is extremely small in scale right now due to the foundation of this web application still being worked on.
