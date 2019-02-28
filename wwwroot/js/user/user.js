@@ -257,6 +257,13 @@ var vm = new Vue({
             this.formData.roleName = '';
             this.formData.password = '';
             this.formData.password2 = '';
+        },
+        validateForms: function(errors) {
+            const entries = Object.entries(errors)
+            for (var e in entries) {
+                if (entries[e][1]) { return false; }
+            }
+            return true;
         }
     },
     created () {

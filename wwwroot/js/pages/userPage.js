@@ -18,6 +18,7 @@ export default{
                 table: true,
                 debug: true,
                 debugButton: true,
+                submit: false,
             },
             formData: {
                 id: '',
@@ -60,6 +61,9 @@ export default{
         computeEditState() {
             return this.states.edit;
         },
+        computeSubmitState() {
+            return this.states.submit;
+        },
     },
     watch: {
         computeDebug: function(val) {
@@ -70,18 +74,37 @@ export default{
                 this.clearForms(this.formData);
                 this.clearErrors(this.errors);
                 this.clearSuccess(this.success);
-                this.states.edit = false;
                 this.states.table = true;
                 this.states.debugButton = true;
+                this.states.add = false;
             }
         },
         computeEditState: function(val) {
             if(val == false) {
+                if (this.states.debug) { this.logger('info', 'cancel button emitted.');}
                 this.clearForms(this.formData);
                 this.clearErrors(this.errors);
                 this.clearSuccess(this.success);
                 this.states.table = true;
                 this.states.debugButton = true;
+            }
+        },
+        computeSubmitState: function(val) {
+            if (val == true) {
+                if (this.states.debug) { this.logger('info', 'submit button emitted.');}
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.submit = false;
+                this.states.debugButton = true;
+                this.states.add = false;
+                axios.get('api/User')
+                .then((response) => {
+                  this.users = response.data;
+                  if(this.states.debug) {this.logger('info', 'Users: =\t' + this.users); }
+                })
+                .catch(error => (console.log(error)));
             }
         },
     },
@@ -118,7 +141,8 @@ export default{
         add: function () {
             if (this.states.debug) { this.logger('info', 'Add user button clicked.'); }
             this.clearForms(this.formData);
-           //this.clearErrors(this.errors);
+            this.clearErrors(this.errors);
+            this.clearSuccess(this.success);
             this.states.debugButton = false;
             this.states.add = true;
             this.states.table = false;
@@ -182,7 +206,8 @@ export default{
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
                 b-bind:debug= 'states.debug'
-                v-on:add-to-user-page="states.add = $event"
+                v-on:cancel-to-user-page="states.add = $event"
+                v-on:add-to-user-page="states.submit = $event"
             ></add-user-form>
         </template>
         <template v-if="states.edit">
@@ -192,7 +217,8 @@ export default{
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
                 b-bind:debug= 'states.debug'
-                v-on:edit-to-user-page="states.edit = $event"
+                v-on:cancel-to-user-page="states.edit = $event"
+                v-on:submit-to-user-page="states.submit = $event"
             ></edit-user-form>
         </template>
     </div>

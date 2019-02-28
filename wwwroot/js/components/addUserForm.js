@@ -151,8 +151,8 @@ export default{
     },
     methods: {
         cancel: function() {
-            this.$emit('add-to-user-page', false);
-            if(this.debug) { this.logger('info', 'cancel button clicked.'); }
+            this.$emit('cancel-to-user-page', false);
+            if(this.debug) { this.logger('info', 'add cancel button clicked.'); }
         },
         logger: function(logLevel, message) {
             var today = new Date();
@@ -162,12 +162,35 @@ export default{
             console.log( dateTime + ' :: ' + logLevel + ' :: ' + message );
         },
         add: function () {
-            if (this.states.debug) { this.logger('info', 'Add user button clicked.'); }
-            this.clearForms(this.formData);
-           //this.clearErrors(this.errors);
-            this.states.debugButton = false;
-            this.states.add = true;
-            this.states.table = false;
+            if (this.debug) { this.logger('info', 'Add user button clicked.'); }
+            if (this.validateForms(this.errors, this.formData)) {
+                let data = {};
+                data.username = this.formData.username;
+                data.password = this.formData.password;
+                data.email = this.formData.email;
+                data.roleName = this.formData.roleName;
+                data.roleId = this.getRoleId(this.formData.roleName);
+                console.log(data);
+                axios({
+                    method: 'POST',
+                    url: 'api/User',
+                    data: JSON.stringify(data),
+                    headers:{'Content-Type': 'application/json; charset=utf-8'},
+                  })
+                  .then(function (response) {
+                    console.log(response);
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  })
+                  .then( () => {
+                    this.$emit('add-to-user-page', true);
+                  })
+            } else {
+                if (this.debug) { this.logger('warning', 'Errors were found.'); }
+                alert('Forms are not valid!');
+            }
+
         },
         clearErrors: function(errors) {
             errors.username = null;
@@ -205,10 +228,20 @@ export default{
             return (re.test(str));
         },
         /* Makes sure there are no errors before making post request */
-        validateForms: function(errors) {
-            const entries = Object.entries(errors)
-            for (var e in entries) {
-                if (entries[e][1]) { return false; }
+        validateForms: function(errors, formData) {
+            for (const [key, value] of Object.entries(errors)) {
+                if (value) { 
+                    if (this.debug) { this.logger('error', 'error.'+key+' has errors.'); }
+                    return false; 
+                }
+            }
+
+            for (const [key, value] of Object.entries(formData)) {
+                if (key != 'id' && !value) {
+                    if (this.debug) { this.logger('error', 'formData.'+key+' is empty.'); }
+                    return false;
+                }
+                
             }
             return true;
         },
@@ -286,7 +319,7 @@ export default{
 
         <div class="form-group"></div>
             <button type="button" class="btn btn-danger"  v-on:click='cancel'>Cancel</button>
-            <button type="button" class="btn btn-primary" >Add User</button>
+            <button type="button" class="btn btn-primary" v-on:click='add'>Add User</button>
         </div>
     </form>
 
