@@ -1,3 +1,5 @@
+
+
 export default{
     name: 'add-user-form',
     props: {
@@ -34,6 +36,9 @@ export default{
                     { message:"50 characters maximum", regex:/^.{0,50}$/, valid: true },
                 ],
             },
+            dismissSecs: 3,
+            dismissCountDown: 0,
+            alert: '',
         }
     },
     mounted()  {
@@ -187,8 +192,7 @@ export default{
                     this.$emit('add-to-user-page', true);
                   })
             } else {
-                if (this.debug) { this.logger('warning', 'Errors were found.'); }
-                alert('Forms are not valid!');
+                this.showAlert('Forms are not valid!');
             }
 
         },
@@ -271,10 +275,30 @@ export default{
                 return 3;
             }
             return 0;
-        }, 
+        },
+        countDownChanged(dismissCountDown) {
+            this.dismissCountDown = dismissCountDown;
+        },
+        showAlert(alert) {
+            window.scrollTo(0, 0);
+            this.alert = alert;
+            this.dismissCountDown = this.dismissSecs;
+        }
     },
     template: `
-    <form>
+        <form>
+        
+            <b-alert
+                :show="dismissCountDown"
+                dismissible
+                variant="danger"
+                @dismissed="dismissCountDown=0"
+                @dismiss-count-down="countDownChanged"
+            >
+                <p>{{ alert }}</p>
+                <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
+            </b-alert>
+
         <div class="form-group">
             <label>Username</label>
             <input type="text" class="form-control form-control-sm" placeholder="Enter your username" v-model="formData.username" />

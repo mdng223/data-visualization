@@ -16,39 +16,8 @@ namespace Networth.Services{
      public static class NetworthDbContextExtensions{
           public static void CreateSeedData(this NetworthDbContext context){
                if(!context.Positions.Any()){
-                    var p = new List<Networth.Entities.Position.Position>(){
-                         new Position(){
-                              PositionName = "Fidelity Contrafund",
-                              Symbol = "FCNTX",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                         new Position(){
-                              PositionName = "Fidelity ZERO Total Market Index Fund",
-                              Symbol = "FZROX",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                         new Position(){
-                              PositionName = "Equity Index Trust Class C",
-                              Symbol = "XCT",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                         new Position(){
-                              PositionName = "Vanguard Small Cap Index, Admiral Shares",
-                              Symbol = "VSMAX",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                         new Position(){
-                              PositionName = "Vanguard 500 Index Fund Admiral Shares",
-                              Symbol = "VFIAX",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                    };
-                    context.AddRange(p);
+
+                    //context.AddRange(p);
                }
                if(!context.Loans.Any()){
                     var l = new List<Networth.Entities.Loan.Loan>(){
@@ -96,6 +65,40 @@ namespace Networth.Services{
                }
                context.SaveChanges();
                if(!context.Users.Any()){
+
+                    var p = new List<Networth.Entities.Position.Position>(){
+                         new Position(){
+                              PositionName = "Fidelity Contrafund",
+                              Symbol = "FCNTX",
+                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
+                              Hidden = false,
+                         },
+                         new Position(){
+                              PositionName = "Fidelity ZERO Total Market Index Fund",
+                              Symbol = "FZROX",
+                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
+                              Hidden = false,
+                         },
+                         new Position(){
+                              PositionName = "Equity Index Trust Class C",
+                              Symbol = "XCT",
+                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
+                              Hidden = false,
+                         },
+                         new Position(){
+                              PositionName = "Vanguard Small Cap Index, Admiral Shares",
+                              Symbol = "VSMAX",
+                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
+                              Hidden = false,
+                         },
+                         new Position(){
+                              PositionName = "Vanguard 500 Index Fund Admiral Shares",
+                              Symbol = "VFIAX",
+                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
+                              Hidden = false,
+                         },
+                    };
+
                     var u = new List<Networth.Entities.User.User>(){
                          new User(){
                               Username = "mdng223",
@@ -103,6 +106,7 @@ namespace Networth.Services{
                               Email = "as;dfljkasdf@gmail.com",
                               RoleId = context.Roles.FirstOrDefault(a => a.Id == (int)RoleEnum.Administrator).RoleId,
                               Hidden = false,
+                              Positions =  p,
                          },
                          new User(){
                               Username = "hello",
@@ -119,6 +123,11 @@ namespace Networth.Services{
                               Hidden = false,
                          },
                     };
+                    foreach (Position position in p) {
+                              position.User = context.Users.FirstOrDefault(a => a.Username == "mdng223");
+                              //position.UserId = context.Users.FirstOrDefault(a => a.Username == "mdng223").Id;
+                    }
+                    context.AddRange(p);
                     context.AddRange(u);
                }
 

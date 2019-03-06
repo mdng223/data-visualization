@@ -25,9 +25,12 @@ export default{
     },
     template: 
     `
-        <div>
-            <b-button :pressed.sync="myToggle" 
+
+
+            <b-button lg size='sm' :pressed.sync="myToggle" 
             variant="primary">{{ this.buttonValue }}</b-button>
-        </div>
+
+
+
     `
   }

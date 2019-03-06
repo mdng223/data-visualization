@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Networth.Services;
+using Networth.Entities.Loan;
+using Networth.Models;
 
 namespace Networth.Controllers
 {
@@ -23,7 +25,17 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]")]
         public ActionResult GetLoans() {
-            return Json(_context.Loans);
+            List<LoanViewModel> loanList = new List<LoanViewModel> {};
+            foreach (Loan loan in _context.Loans) {
+                if (loan.Hidden == false) {
+                    LoanViewModel loanData = new LoanViewModel();
+                    loanData.LoanId = loan.LoanId;
+                    loanData.LoanName = loan.LoanName;
+                    // loanData.UserId = _context.Loans.Find(loan.UserId);
+                    loanList.Add(loanData);
+                }
+            }
+            return Json(loanList);
         }
 
         [HttpGet("api/[controller]/{id}")]

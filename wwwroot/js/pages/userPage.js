@@ -1,10 +1,14 @@
 import DebugButton from '../components/debugButton.js'
 import AddUserForm from '../components/addUserForm.js'
 import EditUserForm from '../components/editUserForm.js'
+import Pagination from '../components/pagination.js'
+
 
 Vue.component('debugButton', DebugButton);
 Vue.component('addUserForm', AddUserForm);
 Vue.component('editUserForm', EditUserForm);
+Vue.component('pagination', Pagination);
+
 
 export default{
     name: 'user-table',
@@ -12,6 +16,9 @@ export default{
         return {
             users: '',
             title: '',
+            dismissSecs: 3,
+            dismissCountDown: 0,
+            alert: '',
             states: {
                 add: false,
                 edit: false,
@@ -19,6 +26,7 @@ export default{
                 debug: true,
                 debugButton: true,
                 submit: false,
+                cancel: false,
             },
             formData: {
                 id: '',
@@ -40,7 +48,7 @@ export default{
                 email: null,
                 password: null,
                 password2: null,
-            },
+            }, 
         }
     },
     mounted()  {
@@ -64,6 +72,9 @@ export default{
         computeSubmitState() {
             return this.states.submit;
         },
+        computeCancelState() {
+            return this.states.cancel;
+        }
     },
     watch: {
         computeDebug: function(val) {
@@ -80,18 +91,17 @@ export default{
             }
         },
         computeEditState: function(val) {
-            if(val == false) {
-                if (this.states.debug) { this.logger('info', 'cancel button emitted.');}
+            if(val == false && this.states.cancel) {
                 this.clearForms(this.formData);
                 this.clearErrors(this.errors);
                 this.clearSuccess(this.success);
                 this.states.table = true;
                 this.states.debugButton = true;
+                this.showAlert(this.title + ' edited successfully!');
             }
         },
         computeSubmitState: function(val) {
             if (val == true) {
-                if (this.states.debug) { this.logger('info', 'submit button emitted.');}
                 this.clearForms(this.formData);
                 this.clearErrors(this.errors);
                 this.clearSuccess(this.success);
@@ -99,18 +109,32 @@ export default{
                 this.states.submit = false;
                 this.states.debugButton = true;
                 this.states.add = false;
+                this.states.edit = false;
                 axios.get('api/User')
                 .then((response) => {
                   this.users = response.data;
                   if(this.states.debug) {this.logger('info', 'Users: =\t' + this.users); }
                 })
-                .catch(error => (console.log(error)));
+                .catch(error => (console.log(error)))
+                .then( this.showAlert('User added successfully!') );
             }
         },
+        computeCancelState: function(val) {
+            if(val == true) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.debugButton = true;
+                this.states.add = false;
+                this.states.edit = false;
+                this.states.cancel = false;
+
+            }
+        }
     },
     methods: {
         edit: function (user) {
-            if (this.states.debug) {this.logger('info', 'Edit button clicked.')}
             this.states.edit = true;
             this.states.table = false;
             this.states.debugTable = false;
@@ -119,6 +143,7 @@ export default{
             this.formData.id = user.id;
             this.formData.email = user.email;
             this.formData.roleName = user.roleName;
+            this.formData.username = user.username;
             this.formData.roleId = this.getRoleId(this.formData.roleName);
         },
         logger: function(logLevel, message) {
@@ -139,7 +164,6 @@ export default{
             return 0;
         },
         add: function () {
-            if (this.states.debug) { this.logger('info', 'Add user button clicked.'); }
             this.clearForms(this.formData);
             this.clearErrors(this.errors);
             this.clearSuccess(this.success);
@@ -168,14 +192,64 @@ export default{
             success.password = null;
             success.password2 = null;
         },
+        remove: function(user) {
+            var confirm = window.confirm("Are you sure?");
+            if (confirm) {
+                let data = {};
+                data.id = user.id;
+                axios({
+                    method: 'Put',
+                    url: 'api/User/hide',
+                    data: data,
+                    headers:{'Content-Type': 'application/json; charset=utf-8'},
+                  })
+                  .then(function (response) {
+                    console.log(response);
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  })
+                  .then( () => {
+                    axios.get('api/User')
+                    .then((response) => {
+                      this.users = response.data;
+                      if(this.states.debug) {this.logger('info', 'Users: =\t' + this.users); }
+                    })
+                    .catch(error => (console.log(error)))
+                    .then( this.showAlert('User deleted successfully!') );
+                  });
+            }
+        },
+        countDownChanged(dismissCountDown) {
+            this.dismissCountDown = dismissCountDown;
+        },
+        showAlert(alert) {
+            window.scrollTo(0, 0);
+            this.alert = alert;
+            this.dismissCountDown = this.dismissSecs;
+        }
     },
     template: `
     <div>
-        <template v-if="states.debugButton">
-            <debug-button v-on:child-to-parent="states.debug = $event"></debug-button>
-        </template>
-        
+
+        <b-alert
+            :show="dismissCountDown"
+            dismissible
+            variant="success"
+            @dismissed="dismissCountDown=0"
+            @dismiss-count-down="countDownChanged"
+        >
+            <p>{{ alert }}</p>
+            <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
+        </b-alert>
         <template v-if="states.table">
+            <b-container><b-form-group>
+                <template v-if="states.debugButton">
+                    <debug-button v-on:child-to-parent="states.debug = $event"></debug-button>
+                </template>
+                <b-button size='sm' variant="success" v-on:click="add">Add User</b-button>
+            </b-form-group></b-container>
+  
             <table  class="table table-bordered">
             <tr>
                 <th>Username</th>
@@ -190,14 +264,21 @@ export default{
                 <td> {{ user.email }} </td>
                 <td> {{ user.roleName }} </td>
                 <td>
-                    <button class='btn btn-warning btn-sm' v-on:click="edit(user)"> Edit </button>
+                    <div class="mx-auto" style="width: 50px;">
+                        <button class='btn btn-warning btn-sm' v-on:click="edit(user)"> Edit </button>
+                    </div>
                 </td>
                 <td>
-                    <button class='btn btn-danger btn-sm' v-on:click="remove(user)"> Delete </button>
+                    <div class="mx-auto" style="width: 50px;">
+                        <button class='btn btn-danger btn-sm' v-on:click="remove(user)"> Delete </button>
+                    </div>
                 </td> 
             </tr>
             </table>
-            <button type="button" class="btn btn-success" v-on:click="add">Add User</button>
+            <b-container>
+                <pagination></pagination>
+            </b-container>
+
         </template>
         <template v-if="states.add">
             <add-user-form
@@ -205,20 +286,20 @@ export default{
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                b-bind:debug= 'states.debug'
+                v-bind:debug= 'states.debug'
                 v-on:cancel-to-user-page="states.add = $event"
                 v-on:add-to-user-page="states.submit = $event"
             ></add-user-form>
         </template>
         <template v-if="states.edit">
             <edit-user-form
-                v-bind:title= 'title'
+                v-bind:users= 'users'
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                b-bind:debug= 'states.debug'
-                v-on:cancel-to-user-page="states.edit = $event"
-                v-on:submit-to-user-page="states.submit = $event"
+                v-bind:debug= 'states.debug'
+                v-on:cancel-to-user-page="states.cancel = $event"
+                v-on:edit-to-user-page="states.submit = $event"
             ></edit-user-form>
         </template>
     </div>

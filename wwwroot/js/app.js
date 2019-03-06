@@ -1,25 +1,26 @@
-
+import Home from './pages/homePage.js'
 import UserPage from './pages/userPage.js'
+import NotFound from './pages/notFound.js'
 import DebugButton from './components/debugButton.js'
 
 
-const Foo = { template: '<div>foo</div>' }
-const Bar = { template: '<div>bar</div>' }
-const a_404 = {template: '<div>404</div>'}
+const Positions = { template: '<div>Positions</div>' }
+const Loans = { template: '<div>Loans</div>' }
 // 2. Define some routes
 // Each route should map to a component. The "component" can
 // either be an actual component constructor created via
 // `Vue.extend()`, or just a component options object.
 // We'll talk about nested routes later.
 const routes = [
-  { path: '/foo', name: 'Foo', component: Foo },
-  { path: '/bar', name: 'Bar', component: Bar },
-  { path: '/user', 
-    name: 'User', 
+  { path: '/', name: 'Home', component: Home },
+  { path: '/Positions', name: 'Positions', component: Positions },
+  { path: '/loans', name: 'Loans', component: Loans },
+  { path: '/users', 
+    name: 'Users', 
     components: { default: UserPage},
     props: {default: true}
   },
-  { path: '*', name: '404', component: a_404}
+  { path: '*', name: '404', component: NotFound}
 ]
 
 // 3. Create the router instance and pass the `routes` option
@@ -79,24 +80,26 @@ const app = new Vue({
       this.debug = !this.debug;
     },
     determineRoute() {
-      this.loading = true
-     
+
      switch (this.$route.name) {
-      case "User":
+      case "Home":
+        break;
+      case "Users":
         this.fetchUsers();
         break;
       case "Foo":
         if (this.debug) { this.logger('info', 'foo()'); }
         this.userState = false;
         break;
-      case "Bar":
+      case "Loans":
         this.userState = false;
-        if (this.debug) { this.logger('info', 'bar()'); }
+        if (this.debug) { this.logger('info', 'loans()'); }
         break;
       default:
         this.userState = false;
         if (this.debug) { this.logger('error', '404()'); }
      }
+     this.loading = false;
     },
     fetchUsers() {
       if (this.debug) {

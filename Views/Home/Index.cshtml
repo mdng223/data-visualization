@@ -3,14 +3,23 @@
 }
 
 <div id="app">
-  <h1>Hello App!</h1>
-  <p>
-    <!-- use router-link component for navigation. -->
-    <!-- specify the link by passing the `to` prop. -->
-    <!-- `<router-link>` will be rendered as an `<a>` tag by default -->
-    <router-link to="/foo">Go to Foo</router-link>
-    <router-link to="/bar">Go to Bar</router-link>
-    <router-link to="/user">Go to User</router-link>
+
+  <template>
+    <b-navbar type="dark" variant="dark">
+      <b-navbar-nav>
+        <b-nav-item to="/">Home</b-nav-item>
+        <b-nav-item to="/Positions">Positions</b-nav-item>
+        <b-nav-item to="/Loans">Loans</b-nav-item>
+        <b-nav-item to="/users">Users</b-nav-item>
+        <!-- Navbar dropdowns -->
+        <b-nav-item-dropdown text="User" right>
+          <b-dropdown-item href="#">Account</b-dropdown-item>
+          <b-dropdown-item href="#">Settings</b-dropdown-item>
+          <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </b-navbar>
+  </template>
   </p>
   <!-- route outlet -->
   <!-- component matched by the route will render here -->

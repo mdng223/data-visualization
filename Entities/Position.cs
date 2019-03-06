@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.Collections.Generic;
 using Networth.Entities.PositionEntry;
+using Networth.Entities.User;
 
 namespace Networth.Entities.Position
 {
@@ -18,6 +19,8 @@ namespace Networth.Entities.Position
         public DateTime DateAdded { get; set; }
         public int AccountTypeId { get; set; }
         public bool Hidden { get; set; }
+        public int UserId { get; set; }
+        public User.User User { get; set; }
         public ICollection<PositionEntry.PositionEntry> PositionEntries;
     }
 }

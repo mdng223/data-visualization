@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Networth.Services;
 using Networth.Entities.User;
+using Networth.Entities.Position;
 using Networth.Models;
 
 
