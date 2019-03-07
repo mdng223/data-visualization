@@ -31,6 +31,9 @@ namespace Networth.Controllers
                     LoanViewModel loanData = new LoanViewModel();
                     loanData.LoanId = loan.LoanId;
                     loanData.LoanName = loan.LoanName;
+                    loanData.Debt = loan.Debt;
+                    loanData.LoanDate = loan.LoanDate;
+                    loanData.LoanType = loan.LoanType;
                     // loanData.UserId = _context.Loans.Find(loan.UserId);
                     loanList.Add(loanData);
                 }

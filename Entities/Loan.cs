@@ -16,9 +16,11 @@ namespace Networth.Entities.Loan
         [Required]
         [MaxLength(50), MinLength(1)]
         public string LoanName { get; set; }
-        public DateTime DateAdded { get; set; }
+        public DateTime LoanDate { get; set; }
         public string LoanType { get; set; }
+        public decimal Debt { get; set; }
         public bool Hidden { get; set; }
+
         public ICollection<LoanEntry.LoanEntry> LoanEntries;
     }
 }

@@ -9,8 +9,8 @@ namespace Networth.Models
         public int LoanId  {get; set; }
         public string LoanName { get; set; }
         public string LoanType { get; set; }
-        public int UserId { get; set; }
-        public string Username { get; set; }
+        public decimal Debt { get; set; }
+        public DateTime LoanDate { get; set; }
         public ICollection<Loan> LoanEntries;
     }
 }

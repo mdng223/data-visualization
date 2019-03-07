@@ -1,11 +1,11 @@
 import Home from './pages/homePage.js'
 import UserPage from './pages/userPage.js'
 import NotFound from './pages/notFound.js'
+import PositionPage from './pages/positionPage.js'
+import LoanPage from './pages/loanPage.js'
 import DebugButton from './components/debugButton.js'
 
 
-const Positions = { template: '<div>Positions</div>' }
-const Loans = { template: '<div>Loans</div>' }
 // 2. Define some routes
 // Each route should map to a component. The "component" can
 // either be an actual component constructor created via
@@ -13,8 +13,8 @@ const Loans = { template: '<div>Loans</div>' }
 // We'll talk about nested routes later.
 const routes = [
   { path: '/', name: 'Home', component: Home },
-  { path: '/Positions', name: 'Positions', component: Positions },
-  { path: '/loans', name: 'Loans', component: Loans },
+  { path: '/Positions', name: 'Positions', component: PositionPage },
+  { path: '/loans', name: 'Loans', component: LoanPage },
   { path: '/users', 
     name: 'Users', 
     components: { default: UserPage},

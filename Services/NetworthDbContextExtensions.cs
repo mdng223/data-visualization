@@ -19,31 +19,7 @@ namespace Networth.Services{
 
                     //context.AddRange(p);
                }
-               if(!context.Loans.Any()){
-                    var l = new List<Networth.Entities.Loan.Loan>(){
-                         new Loan(){
-                              LoanName = "Loan1",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                         new Loan(){
-                              LoanName = "Loan2",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                         new Loan(){
-                              LoanName = "Loan3",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         },
-                         new Loan(){
-                              LoanName = "Loan4",
-                              DateAdded = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                              Hidden = false,
-                         }
-                    };
-                    context.AddRange(l);
-               }
+              
                if(!context.Roles.Any()){
                     var r = new List<Networth.Entities.Role.Role>(){
                          new Role(){
@@ -129,6 +105,43 @@ namespace Networth.Services{
                     }
                     context.AddRange(p);
                     context.AddRange(u);
+                    if(!context.Loans.Any()){
+                    var l = new List<Networth.Entities.Loan.Loan>(){
+                         new Loan(){
+                              LoanName = "Direct Subsidized Stafford 1",
+                              LoanType = "Subsidized",
+                              LoanDate =  DateTime.Parse("November 14, 2014"),
+                              Hidden = false,
+                              Debt = 0.0m,
+                              //UserId = context.Users.FirstOrDefault(a => a.Username == "mdng223").Id,
+                         },
+                         new Loan(){
+                              LoanName = "Direct Subsidized Stafford 2",
+                              LoanType = "Subsidized",
+                              LoanDate = DateTime.Parse("October 27, 2015"),
+                              Hidden = false,
+                              Debt = 1653.04m,
+                              //UserId = context.Users.FirstOrDefault(a => a.Username == "mdng223").Id,
+                         },
+                         new Loan(){
+                              LoanName = "Direct Subsidized Stafford 3",
+                              LoanType = "Subsidized",
+                              LoanDate = DateTime.Parse("September 7, 2016"),
+                              Hidden = false,
+                              Debt = 4899.84m,
+                              //UserId = context.Users.FirstOrDefault(a => a.Username == "mdng223").Id,
+                         },
+                         new Loan(){
+                              LoanName = "Direct Unsubsidized Stafford 3",
+                              LoanType = "Unsubsidized",
+                              LoanDate = DateTime.Parse("September 7, 2016"),
+                              Hidden = false,
+                              Debt = 1848.79m,
+                              //UserId = context.Users.FirstOrDefault(a => a.Username == "mdng223").Id,
+                         }
+                    };
+                    context.AddRange(l);
+               }
                }
 
                context.SaveChanges();

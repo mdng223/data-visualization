@@ -1,14 +1,16 @@
 
 import Pagination from '../components/pagination.js'
 
+
+
 Vue.component('pagination', Pagination);
 
 
 export default{
-    name: 'loan-table',
+    name: 'position-table',
     data: function() {
         return {
-            loans: '',
+            positions: '',
             title: '',
             dismissSecs: 3,
             dismissCountDown: 0,
@@ -30,9 +32,9 @@ export default{
         }
     },
     mounted()  {
-        axios.get('api/Loan')
+        axios.get('api/Position')
         .then((response) => {
-          this.loans = response.data;
+          this.positions = response.data;
         })
         .catch(error => (console.log(error)));
     },
@@ -64,7 +66,7 @@ export default{
                 data.id = user.id;
                 axios({
                     method: 'Put',
-                    url: 'api/Loan/hide',
+                    url: 'api/Position/hide',
                     data: data,
                     headers:{'Content-Type': 'application/json; charset=utf-8'},
                   })
@@ -75,7 +77,7 @@ export default{
                     console.log(error);
                   })
                   .then( () => {
-                    axios.get('api/Loan')
+                    axios.get('api/Position')
                     .then((response) => {
                       this.users = response.data;
                     })
@@ -108,32 +110,30 @@ export default{
         </b-alert>
         <template v-if="states.table">
             <b-container><b-form-group>
-                <b-button size='sm' variant="success" v-on:click="add">Add Loan</b-button>
+                <b-button size='sm' variant="success" v-on:click="add">Add Position</b-button>
             </b-form-group></b-container>
   
             <table  class="table table-bordered">
             <tr>
-                <th>Loan Name</th>
-                <th>Loan Type</th>
-                <th>Debt</th>
-                <th>Loan Date</th>
+                <th>Position Name</th>
+                <th>Symbol</th>
+                <th>username</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
 
-            <tr v-for="(loan, index) in loans">
-                <td> {{ loan.loanName }} </td>
-                <td> {{ loan.loanType }} </td>
-                <td> $ {{ loan.debt }} </td>
-                <td> {{ loan.loanDate}}
+            <tr v-for="(position, index) in positions">
+                <td> {{ position.positionName }} </td>
+                <td> {{ position.symbol }} </td>
+                <td> {{ position.username }} </td>
                 <td>
                     <div class="mx-auto" style="width: 50px;">
-                        <button class='btn btn-warning btn-sm' v-on:click="edit(loan)"> Edit </button>
+                        <button class='btn btn-warning btn-sm' v-on:click="edit(position)"> Edit </button>
                     </div>
                 </td>
                 <td>
                     <div class="mx-auto" style="width: 50px;">
-                        <button class='btn btn-danger btn-sm' v-on:click="remove(loan)"> Delete </button>
+                        <button class='btn btn-danger btn-sm' v-on:click="remove(position)"> Delete </button>
                     </div>
                 </td> 
             </tr>
@@ -145,7 +145,7 @@ export default{
         </template>
         <template v-if="states.add">
             <add-user-form
-                v-bind:loans= 'loans'
+                v-bind:positions= 'positions'
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
@@ -156,7 +156,7 @@ export default{
         </template>
         <template v-if="states.edit">
             <edit-user-form
-                v-bind:loans= 'loans'
+                v-bind:positions= 'positions'
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
