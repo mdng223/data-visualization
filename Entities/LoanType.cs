@@ -1,26 +1,22 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Networth.Entities.User;
+using Networth.Entities.Loan;
 using System.Collections.Generic;
 using System;
 
-namespace Networth.Entities.Role
+namespace Networth.Entities.LoanType
 {
-    public enum RoleEnum {
-        Administrator= 1, Manager = 2, User = 3
+    public enum LoanEnum {
+        Subsidized, Unsubsidized
     }
-     public class Role
+     public class LoanType
     {
-         
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public int RoleId { get; set; }
+        public int LoanTypeId { get; set; }
         [Required, MaxLength(20), MinLength(4)]
-        public string RoleName { get; set; }
-
-       // public virtual ICollection<User.User> Users { get; set; }
+        public string LoanTypeName { get; set; }
     }
-
 }

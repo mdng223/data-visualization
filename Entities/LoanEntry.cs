@@ -2,22 +2,19 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.Collections.Generic;
+using Networth.Entities.Loan;
 
 namespace Networth.Entities.LoanEntry
 {
     public class LoanEntry {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PositionEntryId { get; set; }
+        public int LoanEntryId { get; set; }
 
-        [Required]
-        public decimal Amount { get; set; }
 
-        [Required]
-
+        public int LoanId { get; set; }
+        public decimal Debt { get; set; }
         public DateTime DateAdded { get; set; }
         public bool Hidden { get; set; }
-        [Required]
-        public Position.Position Position { get; set; }
     }
 }

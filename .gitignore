@@ -72,3 +72,4 @@ msbuild.wrn
 
 *.sh
 *.config
+*.csv

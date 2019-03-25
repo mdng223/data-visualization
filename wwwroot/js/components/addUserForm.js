@@ -167,7 +167,6 @@ export default{
             console.log( dateTime + ' :: ' + logLevel + ' :: ' + message );
         },
         add: function () {
-            if (this.debug) { this.logger('info', 'Add user button clicked.'); }
             if (this.validateForms(this.errors, this.formData)) {
                 let data = {};
                 data.username = this.formData.username;

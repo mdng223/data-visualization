@@ -10,17 +10,12 @@ namespace Networth.Entities.PositionEntry
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PositionEntryId { get; set; }
-
-        [Required]
         public decimal Quantity { get; set; }
-        [Required]
         public decimal Price { get; set; }
 
-        [Required]
 
         public DateTime DateAdded {get; set; }
         public bool Hidden { get; set; }
-        [Required]
-        public Position.Position Position { get; set; }
+        public int PositionId { get; set; }
     }
 }

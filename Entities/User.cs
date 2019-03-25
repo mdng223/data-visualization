@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Networth.Entities.Position;
+using Networth.Entities.Loan;
 using Networth.Entities.Role;
+using Networth.Entities.Bank;
 using System.Collections.Generic;
 using System;
 
@@ -19,11 +21,12 @@ namespace Networth.Entities.User
           public string Password { get; set; }
           [Required, MaxLength(50), MinLength(6)]
           public string Email { get; set; }
-
-          public int LoanId { get; set; }
           public DateTime DateAdded { get; set; } 
           public bool Hidden {get; set; }
+
+          public virtual ICollection<Bank.Bank> Banks { get; set; }
           public virtual ICollection<Position.Position> Positions { get; set; }
+          public virtual ICollection<Loan.Loan> Loans { get; set; }
           
           [ForeignKey("RoleId")]
           public int RoleId { get; set; }

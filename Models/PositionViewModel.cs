@@ -13,7 +13,7 @@ namespace Networth.Models
 
         public int AccountTypeId { get; set; }
 
-        public int UserId { get; set; }
+      //  public int UserId { get; set; }
         public string Username { get; set; }
 
         public ICollection<Position> PositionEntries;

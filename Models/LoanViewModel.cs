@@ -11,6 +11,8 @@ namespace Networth.Models
         public string LoanType { get; set; }
         public decimal Debt { get; set; }
         public DateTime LoanDate { get; set; }
+        public double InterestRate { get; set; }
+        public string User { get; set;}
         public ICollection<Loan> LoanEntries;
     }
 }

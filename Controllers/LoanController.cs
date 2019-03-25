@@ -33,8 +33,11 @@ namespace Networth.Controllers
                     loanData.LoanName = loan.LoanName;
                     loanData.Debt = loan.Debt;
                     loanData.LoanDate = loan.LoanDate;
-                    loanData.LoanType = loan.LoanType;
-                    // loanData.UserId = _context.Loans.Find(loan.UserId);
+                    loanData.LoanType = _context.LoanTypes.FirstOrDefault(a => a.LoanTypeId == 
+                                        loan.LoanTypeId).LoanTypeName;
+                    loanData.InterestRate = loan.InterestRate;
+                    loanData.User = _context.Users.FirstOrDefault(a => a.Id == 
+                                        loan.UserId).Username;
                     loanList.Add(loanData);
                 }
             }

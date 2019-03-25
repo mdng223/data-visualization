@@ -64,6 +64,7 @@ namespace Networth
             app.UseStaticFiles();
             app.UseCookiePolicy();
             networthDbContext.CreateSeedData();
+            
 
             app.UseMvc(routes =>
             {

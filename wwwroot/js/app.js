@@ -17,7 +17,7 @@ const routes = [
   { path: '/loans', name: 'Loans', component: LoanPage },
   { path: '/users', 
     name: 'Users', 
-    components: { default: UserPage},
+    components: { default: UserPage },
     props: {default: true}
   },
   { path: '*', name: '404', component: NotFound}
@@ -84,29 +84,27 @@ const app = new Vue({
      switch (this.$route.name) {
       case "Home":
         break;
+      case "Positions":
+        this.userState = false;
+        break;
       case "Users":
         this.fetchUsers();
         break;
       case "Foo":
-        if (this.debug) { this.logger('info', 'foo()'); }
         this.userState = false;
         break;
       case "Loans":
         this.userState = false;
-        if (this.debug) { this.logger('info', 'loans()'); }
         break;
       default:
         this.userState = false;
-        if (this.debug) { this.logger('error', '404()'); }
      }
      this.loading = false;
     },
     fetchUsers() {
-      if (this.debug) {
-        this.logger('info', 'fetchUsers()');
-      }
+      this.logger('info', 'fetchUsers()');
       this.userState = true;
-      userRequests.fetchUsers(this);
+      //userRequests.fetchUsers(this);
     },
     logger(logLevel, message) {
       var today = new Date();

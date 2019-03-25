@@ -1,10 +1,7 @@
-import DebugButton from '../components/debugButton.js'
 import AddUserForm from '../components/addUserForm.js'
 import EditUserForm from '../components/editUserForm.js'
 import Pagination from '../components/pagination.js'
 
-
-Vue.component('debugButton', DebugButton);
 Vue.component('addUserForm', AddUserForm);
 Vue.component('editUserForm', EditUserForm);
 Vue.component('pagination', Pagination);
@@ -23,8 +20,6 @@ export default{
                 add: false,
                 edit: false,
                 table: true,
-                debug: true,
-                debugButton: true,
                 submit: false,
                 cancel: false,
             },
@@ -55,14 +50,10 @@ export default{
         axios.get('api/User')
         .then((response) => {
           this.users = response.data;
-          if(this.states.debug) {this.logger('info', 'Users: =\t' + this.users); }
         })
         .catch(error => (console.log(error)));
     },
     computed: {
-        computeDebug() {
-          return this.states.debug;
-        },
         computeAddState() {
           return this.states.add;
         },
@@ -77,16 +68,12 @@ export default{
         }
     },
     watch: {
-        computeDebug: function(val) {
-            this.logger('info', 'User Page logger set to ' + val);
-        },
         computeAddState: function(val) {
             if(val == false) {
                 this.clearForms(this.formData);
                 this.clearErrors(this.errors);
                 this.clearSuccess(this.success);
                 this.states.table = true;
-                this.states.debugButton = true;
                 this.states.add = false;
             }
         },
@@ -96,7 +83,6 @@ export default{
                 this.clearErrors(this.errors);
                 this.clearSuccess(this.success);
                 this.states.table = true;
-                this.states.debugButton = true;
                 this.showAlert(this.title + ' edited successfully!');
             }
         },
@@ -107,13 +93,11 @@ export default{
                 this.clearSuccess(this.success);
                 this.states.table = true;
                 this.states.submit = false;
-                this.states.debugButton = true;
                 this.states.add = false;
                 this.states.edit = false;
                 axios.get('api/User')
                 .then((response) => {
                   this.users = response.data;
-                  if(this.states.debug) {this.logger('info', 'Users: =\t' + this.users); }
                 })
                 .catch(error => (console.log(error)))
                 .then( this.showAlert('User added successfully!') );
@@ -125,11 +109,9 @@ export default{
                 this.clearErrors(this.errors);
                 this.clearSuccess(this.success);
                 this.states.table = true;
-                this.states.debugButton = true;
                 this.states.add = false;
                 this.states.edit = false;
                 this.states.cancel = false;
-
             }
         }
     },
@@ -137,7 +119,6 @@ export default{
         edit: function (user) {
             this.states.edit = true;
             this.states.table = false;
-            this.states.debugTable = false;
             this.title = user.username;
 
             this.formData.id = user.id;
@@ -164,12 +145,14 @@ export default{
             return 0;
         },
         add: function () {
-            this.clearForms(this.formData);
-            this.clearErrors(this.errors);
-            this.clearSuccess(this.success);
-            this.states.debugButton = false;
-            this.states.add = true;
-            this.states.table = false;
+            this.logger('info', this.$root.$data.userState)
+            if(this.$root.$data.userState) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.add = true;
+                this.states.table = false;
+            }
         },
         clearErrors: function(errors) {
             errors.username = null;
@@ -213,7 +196,6 @@ export default{
                     axios.get('api/User')
                     .then((response) => {
                       this.users = response.data;
-                      if(this.states.debug) {this.logger('info', 'Users: =\t' + this.users); }
                     })
                     .catch(error => (console.log(error)))
                     .then( this.showAlert('User deleted successfully!') );
@@ -244,9 +226,6 @@ export default{
         </b-alert>
         <template v-if="states.table">
             <b-container><b-form-group>
-                <template v-if="states.debugButton">
-                    <debug-button v-on:child-to-parent="states.debug = $event"></debug-button>
-                </template>
                 <b-button size='sm' variant="success" v-on:click="add">Add User</b-button>
             </b-form-group></b-container>
   
@@ -286,7 +265,6 @@ export default{
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                v-bind:debug= 'states.debug'
                 v-on:cancel-to-user-page="states.add = $event"
                 v-on:add-to-user-page="states.submit = $event"
             ></add-user-form>
@@ -297,7 +275,6 @@ export default{
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                v-bind:debug= 'states.debug'
                 v-on:cancel-to-user-page="states.cancel = $event"
                 v-on:edit-to-user-page="states.submit = $event"
             ></edit-user-form>

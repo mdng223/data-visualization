@@ -1,8 +1,8 @@
-
+import AddPositionForm from '../components/addPositionForm.js'
 import Pagination from '../components/pagination.js'
 
 
-
+Vue.component('addPositionForm', AddPositionForm);
 Vue.component('pagination', Pagination);
 
 
@@ -44,11 +44,15 @@ export default{
         
     },
     methods: {
-        edit: function (user) {
+        edit: function (position) {
            
         },
         add: function () {
-
+            this.clearForms(this.formData);
+            this.clearErrors(this.errors);
+            this.clearSuccess(this.success);
+            this.states.add = true;
+            this.states.table = false;
         },
         clearErrors: function(errors) {
 
@@ -59,11 +63,13 @@ export default{
         clearSuccess: function(success) {
 
         },
-        remove: function(user) {
+        remove: function(position) {
+            console.log(position)
             var confirm = window.confirm("Are you sure?");
             if (confirm) {
                 let data = {};
-                data.id = user.id;
+                data.id = position.positionId;
+                console.log(data);
                 axios({
                     method: 'Put',
                     url: 'api/Position/hide',
@@ -79,10 +85,10 @@ export default{
                   .then( () => {
                     axios.get('api/Position')
                     .then((response) => {
-                      this.users = response.data;
+                      this.positions = response.data;
                     })
                     .catch(error => (console.log(error)))
-                    .then( this.showAlert('User deleted successfully!') );
+                    .then( this.showAlert('Position deleted successfully!') );
                   });
             }
         },
@@ -118,6 +124,7 @@ export default{
                 <th>Position Name</th>
                 <th>Symbol</th>
                 <th>username</th>
+                <th>History</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -126,6 +133,11 @@ export default{
                 <td> {{ position.positionName }} </td>
                 <td> {{ position.symbol }} </td>
                 <td> {{ position.username }} </td>
+                <td>
+                    <div class="mx-auto" style="width: 50px;">
+                        <button class='btn btn-primary btn-sm'>History</button>
+                    </div>
+                </td>
                 <td>
                     <div class="mx-auto" style="width: 50px;">
                         <button class='btn btn-warning btn-sm' v-on:click="edit(position)"> Edit </button>
@@ -141,29 +153,27 @@ export default{
             <b-container>
                 <pagination></pagination>
             </b-container>
-
         </template>
         <template v-if="states.add">
-            <add-user-form
+            <add-position-form
                 v-bind:positions= 'positions'
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                v-bind:debug= 'states.debug'
-                v-on:cancel-to-user-page="states.add = $event"
-                v-on:add-to-user-page="states.submit = $event"
-            ></add-user-form>
+                v-bind:states= 'states'
+                v-on:cancel-to-position-page="states.add = $event"
+                v-on:add-to-position-page="states.submit = $event"
+            ></add-position-form>
         </template>
         <template v-if="states.edit">
-            <edit-user-form
+            <edit-position-form
                 v-bind:positions= 'positions'
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                v-bind:debug= 'states.debug'
-                v-on:cancel-to-user-page="states.cancel = $event"
-                v-on:edit-to-user-page="states.submit = $event"
-            ></edit-user-form>
+                v-on:cancel-to-position-page="states.cancel = $event"
+                v-on:edit-to-position-page="states.submit = $event"
+            ></edit-position-form>
         </template>
     </div>
     `

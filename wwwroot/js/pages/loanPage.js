@@ -91,6 +91,9 @@ export default{
             window.scrollTo(0, 0);
             this.alert = alert;
             this.dismissCountDown = this.dismissSecs;
+        },
+        truncate(element, index) {
+            return element.slice(0, index);
         }
     },
     template: `
@@ -115,8 +118,11 @@ export default{
             <tr>
                 <th>Loan Name</th>
                 <th>Loan Type</th>
+                <th>User</th>
                 <th>Debt</th>
+                <th>Interest</th>
                 <th>Loan Date</th>
+                <th>History</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -124,8 +130,15 @@ export default{
             <tr v-for="(loan, index) in loans">
                 <td> {{ loan.loanName }} </td>
                 <td> {{ loan.loanType }} </td>
+                <td> {{ loan.user }} </td>
                 <td> $ {{ loan.debt }} </td>
-                <td> {{ loan.loanDate}}
+                <td> {{ loan.interestRate * 100}} % </td>
+                <td> {{ truncate(loan.loanDate, 10)  }} </td>
+                <td>
+                    <div class="mx-auto" style="width: 50px;">
+                        <button class='btn btn-primary btn-sm'>History</button>
+                    </div>
+                </td>
                 <td>
                     <div class="mx-auto" style="width: 50px;">
                         <button class='btn btn-warning btn-sm' v-on:click="edit(loan)"> Edit </button>
