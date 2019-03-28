@@ -39,9 +39,55 @@ export default{
         .catch(error => (console.log(error)));
     },
     computed: {
+        computeAddState() {
+            return this.states.add;
+        },
+        computeSubmitState() {
+            return this.states.submit;
+        },
+        computeCancelState() {
+            return this.states.cancel;
+        }
     },
     watch: {
-        
+        computeSubmitState: function(val) {
+            if (val == true) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.submit = false;
+                this.states.add = false;
+                this.states.edit = false;
+                axios.get('api/Position')
+                .then((response) => {
+                  this.positions = response.data;
+                })
+                .catch(error => (console.log(error)))
+                .then( this.showAlert('Position added successfully!') );
+            }
+        },
+        computeAddState: function(val) {
+            if(val == false) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.add = false;
+            }
+        },
+        computeCancelState: function(val) {
+            console.log(val)
+            if(val == true) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.add = false;
+                this.states.edit = false;
+                this.states.cancel = false;
+            }
+        }
     },
     methods: {
         edit: function (position) {
@@ -64,12 +110,10 @@ export default{
 
         },
         remove: function(position) {
-            console.log(position)
             var confirm = window.confirm("Are you sure?");
             if (confirm) {
                 let data = {};
                 data.id = position.positionId;
-                console.log(data);
                 axios({
                     method: 'Put',
                     url: 'api/Position/hide',
@@ -99,7 +143,8 @@ export default{
             window.scrollTo(0, 0);
             this.alert = alert;
             this.dismissCountDown = this.dismissSecs;
-        }
+        },
+
     },
     template: `
     <div>
@@ -115,9 +160,9 @@ export default{
             <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
         </b-alert>
         <template v-if="states.table">
-            <b-container><b-form-group>
+            <b-form-group>
                 <b-button size='sm' variant="success" v-on:click="add">Add Position</b-button>
-            </b-form-group></b-container>
+            </b-form-group>
   
             <table  class="table table-bordered">
             <tr>
@@ -150,9 +195,7 @@ export default{
                 </td> 
             </tr>
             </table>
-            <b-container>
-                <pagination></pagination>
-            </b-container>
+            <pagination></pagination>
         </template>
         <template v-if="states.add">
             <add-position-form

@@ -12,17 +12,15 @@
 <body>
     <header>
     </header>
-    <div class="container">
-        <partial name="_CookieConsentPartial" />
-        <main role="main" class="pb-3">
+    <div class="">
+        <main role="main" class="pb-1">
             @RenderBody()
-            
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2018 - Networth - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2019 - Networth
         </div>
     </footer>
 
@@ -30,6 +28,7 @@
         <script src="js/vendor/vue.js"></script>
         <script src="js/vendor/axios.min.js"></script>
         <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+        <script src="https://unpkg.com/vuejs-datepicker"></script>
         <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
     </environment>
 

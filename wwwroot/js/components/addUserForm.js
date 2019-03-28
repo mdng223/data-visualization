@@ -157,7 +157,6 @@ export default{
     methods: {
         cancel: function() {
             this.$emit('cancel-to-user-page', false);
-            if(this.debug) { this.logger('info', 'add cancel button clicked.'); }
         },
         logger: function(logLevel, message) {
             var today = new Date();

@@ -54,7 +54,9 @@ var store = {
 const app = new Vue({
   router,
   el: '#app',
-  
+  components: {
+  	vuejsDatepicker
+  },
   data: {
     users: '',
     debug: true,

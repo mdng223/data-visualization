@@ -1,7 +1,12 @@
+
+
 export default{
-    name: 'add-position-form',
+    name: 'add-loan-form',
+    components: {
+        vuejsDatepicker
+    },
     props: {
-        positions: {
+        loans: {
             type: Array,
             required: true
         },
@@ -27,6 +32,9 @@ export default{
             dismissSecs: 3,
             dismissCountDown: 0,
             alert: '',
+            state: {
+                date: new Date(2016, 9,  16)
+            }
         }
     },
     mounted()  {
@@ -37,33 +45,33 @@ export default{
         .catch(error => (this.logger('error', 'roles could not be fetched.')));
     },
     computed: {
-        computePositionName() {
-            return this.formData.positionName;
+        computeloanName() {
+            return this.formData.loanName;
         },
         computeSymbol() {
             return this.formData.symbol;
         },
     },
     watch: {
-        computePositionName: function (val) {
+        computeloanName: function (val) {
             let length = val.length;
 
             var valid = false;
-            this.success.positionName = null;
+            this.success.loanName = null;
             if (!val) {
-                this.errors.positionName = 'Position name is required';
+                this.errors.loanName = 'loan name is required';
             } else if (length < 4) {
-                this.errors.positionName = 'Position name has to be at least 4 characters long';
+                this.errors.loanName = 'loan name has to be at least 4 characters long';
             } else if (length > 20) {
-                this.errors.positionName = 'Your position name is long af & cannot be more than 50 characters long';
-            } else if ( !this.uniqueValue(val, this.getPositionNames(this.positions.length), length) ){
-                this.errors.positionName = 'Position name already exists';
+                this.errors.loanName = 'Your loan name is long af & cannot be more than 50 characters long';
+            } else if ( !this.uniqueValue(val, this.getloanNames(this.loans.length), length) ){
+                this.errors.loanName = 'loan name already exists';
             } else {
-                this.errors.positionName = null;
+                this.errors.loanName = null;
                 valid = true;
             }
             if (valid) {
-                this.success.positionName = 'Valid position name!';
+                this.success.loanName = 'Valid loan name!';
             }
         },
         computeSymbol: function  (val) {
@@ -92,11 +100,12 @@ export default{
                 this.errors.role = null;
                 this.success.role = 'Role selected';
             }
-        }
+        },
+
     },
     methods: {
         cancel: function() {
-            this.$emit('cancel-to-position-page', false);
+            this.$emit('cancel-to-loan-page', false);
         },
         logger: function(logLevel, message) {
             var today = new Date();
@@ -108,12 +117,12 @@ export default{
         add: function () {
             if (this.validateForms(this.errors, this.formData)) {
                 let data = {};
-                data.positionName = this.formData.positionName;
+                data.loanName = this.formData.loanName;
                 data.symbol = this.formData.symbol;
                 data.userid = 1;
                 axios({
                     method: 'POST',
-                    url: 'api/Position',
+                    url: 'api/loan',
                     data: JSON.stringify(data),
                     headers:{'Content-Type': 'application/json; charset=utf-8'},
                   })
@@ -124,7 +133,7 @@ export default{
                     console.log(error);
                   })
                   .then( () => {
-                    this.$emit('add-to-position-page', true);
+                    this.$emit('add-to-loan-page', true);
                   })
             } else {
                 this.showAlert('Forms are not valid!');
@@ -132,7 +141,7 @@ export default{
 
         },
         clearErrors: function(errors) {
-            errors.positionName = null;
+            errors.loanName = null;
             errors.password = null;
             errors.password2 = null;
             errors.symbol = null;
@@ -140,7 +149,7 @@ export default{
         },
         clearForms: function(forms) {
             this.formData.id = '';
-            this.formData.positionName = '';
+            this.formData.loanName = '';
             this.formData.symbol = '';
             this.formData.roleName = '';
             this.formData.password = '';
@@ -151,8 +160,8 @@ export default{
             return (re.test(str));
         },
         uniqueValue: function (val) {
-            for (const position of this.positions) {
-                if (val == position.symbol){
+            for (const loan of this.loans) {
+                if (val == loan.symbol){
                     return false;
                 }
                 return true;
@@ -177,12 +186,12 @@ export default{
             }
             return true;
         },
-        getPositionNames: function(length) {
-            let positionNames = [];
+        getloanNames: function(length) {
+            let loanNames = [];
             for (let i = 0; i < length; i++){ 
-                positionNames.push(this.positions[i].positionName);
+                loanNames.push(this.loans[i].loanName);
             }
-            return positionNames;
+            return loanNames;
         },
         countDownChanged(dismissCountDown) {
             this.dismissCountDown = dismissCountDown;
@@ -191,7 +200,7 @@ export default{
             window.scrollTo(0, 0);
             this.alert = alert;
             this.dismissCountDown = this.dismissSecs;
-        }
+        },
     },
     template: `
         <form>
@@ -208,21 +217,48 @@ export default{
             </b-alert>
 
         <div class="form-group">
-            <label>Position Name</label>
-            <input type="text" class="form-control form-control-sm" placeholder="Enter name of your position" v-model="formData.positionName" />
-            <small class="form-text error">{{ errors.positionName }}</small>
-            <small class="form-text success">{{ success.positionName }}</small>
-        </div>
-        <div class="form-group">
-            <label>Symbol</label>
-            <input type="text" class="form-control form-control-sm" v-model="formData.symbol" />
-                <small class="form-text error">{{ errors.symbol }}</small>
-                <small class="form-text success">{{ success.symbol }}</small>
+            <label>Loan Name</label>
+            <input type="text" class="form-control form-control-sm" placeholder="Enter name of your loan" v-model="formData.loanName" />
+            <small class="form-text error">{{ errors.loanName }}</small>
+            <small class="form-text success">{{ success.loanName }}</small>
         </div>
 
+        <div class="form-group">
+        <label>Symbol</label>
+            <input type="text" class="form-control form-control-sm" v-model="formData.symbol" />
+            <small class="form-text error">{{ errors.symbol }}</small>
+            <small class="form-text success">{{ success.symbol }}</small>
+        </div>
+
+        <div class="form-group">
+            <label>Loan Type</label> 
+                <select class="form-control" v-model="formData.loanType">
+                    <option v-for="loan in loans">{{ loan.loanType }}</option>
+                </select>
+            <small class="form-text error">{{ errors.loan }}</small>
+            <small class="form-text success">{{ success.loan }}</small>
+        </div>
+
+        <div class="form-group">
+        <label>Interest Rate</label>
+            <input type="text" class="form-control form-control-sm" v-model="formData.interest" />
+            <small class="form-text error">{{ errors.interest }}</small>
+            <small class="form-text success">{{ success.interest }}</small>
+        </div>
+
+        <div class="form-group">
+        <label>Loan Origin Date</label>
+        <vuejs-datepicker :bootstrap-styling="true">
+            <div :highlighted="state.highlighted" 
+                 slot="beforeCalendarHeader" 
+                 class="calender-header">
+                Choose a Date
+            </div>
+        </vuejs-datepicker>
+      </datepicker>
         <div class="form-group"></div>
             <button type="button" class="btn btn-danger"  v-on:click='cancel'>Cancel</button>
-            <button type="button" class="btn btn-primary" v-on:click='add'>Add Position</button>
+            <button type="button" class="btn btn-primary" v-on:click='add'>Add loan</button>
         </div>
     </form>
 

@@ -1,6 +1,7 @@
-
+import AddLoanForm from '../components/addLoanForm.js'
 import Pagination from '../components/pagination.js'
 
+Vue.component('addLoanForm', AddLoanForm);
 Vue.component('pagination', Pagination);
 
 
@@ -37,16 +38,78 @@ export default{
         .catch(error => (console.log(error)));
     },
     computed: {
+        computeAddState() {
+            return this.states.add;
+        },
+        computeEditState() {
+            return this.states.edit;
+        },
+        computeSubmitState() {
+            return this.states.submit;
+        },
+        computeCancelState() {
+            return this.states.cancel;
+        }
     },
     watch: {
-        
+        computeAddState: function(val) {
+            
+            if(val == false) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.add = false;
+            }
+        },
+        computeEditState: function(val) {
+            if(val == false && this.states.cancel) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.showAlert(this.title + ' edited successfully!');
+            }
+        },
+        computeSubmitState: function(val) {
+            if (val == true) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.submit = false;
+                this.states.add = false;
+                this.states.edit = false;
+                axios.get('api/User')
+                .then((response) => {
+                  this.users = response.data;
+                })
+                .catch(error => (console.log(error)))
+                .then( this.showAlert('User added successfully!') );
+            }
+        },
+        computeCancelState: function(val) {
+            if(val == true) {
+                this.clearForms(this.formData);
+                this.clearErrors(this.errors);
+                this.clearSuccess(this.success);
+                this.states.table = true;
+                this.states.add = false;
+                this.states.edit = false;
+                this.states.cancel = false;
+            }
+        }
     },
     methods: {
-        edit: function (user) {
+        edit: function (loan) {
            
         },
         add: function () {
-
+            this.clearForms(this.formData);
+            this.clearErrors(this.errors);
+            this.clearSuccess(this.success);
+            this.states.add = true;
+            this.states.table = false;
         },
         clearErrors: function(errors) {
 
@@ -57,11 +120,11 @@ export default{
         clearSuccess: function(success) {
 
         },
-        remove: function(user) {
+        remove: function(loan) {
             var confirm = window.confirm("Are you sure?");
             if (confirm) {
                 let data = {};
-                data.id = user.id;
+                data.id = loan.id;
                 axios({
                     method: 'Put',
                     url: 'api/Loan/hide',
@@ -77,10 +140,10 @@ export default{
                   .then( () => {
                     axios.get('api/Loan')
                     .then((response) => {
-                      this.users = response.data;
+                      this.loans = response.data;
                     })
                     .catch(error => (console.log(error)))
-                    .then( this.showAlert('User deleted successfully!') );
+                    .then( this.showAlert('loan deleted successfully!') );
                   });
             }
         },
@@ -98,7 +161,6 @@ export default{
     },
     template: `
     <div>
-
         <b-alert
             :show="dismissCountDown"
             dismissible
@@ -110,15 +172,15 @@ export default{
             <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
         </b-alert>
         <template v-if="states.table">
-            <b-container><b-form-group>
+            <b-form-group>
                 <b-button size='sm' variant="success" v-on:click="add">Add Loan</b-button>
-            </b-form-group></b-container>
+            </b-form-group>
   
             <table  class="table table-bordered">
             <tr>
                 <th>Loan Name</th>
                 <th>Loan Type</th>
-                <th>User</th>
+                <th>loan</th>
                 <th>Debt</th>
                 <th>Interest</th>
                 <th>Loan Date</th>
@@ -130,7 +192,7 @@ export default{
             <tr v-for="(loan, index) in loans">
                 <td> {{ loan.loanName }} </td>
                 <td> {{ loan.loanType }} </td>
-                <td> {{ loan.user }} </td>
+                <td> {{ loan.loan }} </td>
                 <td> $ {{ loan.debt }} </td>
                 <td> {{ loan.interestRate * 100}} % </td>
                 <td> {{ truncate(loan.loanDate, 10)  }} </td>
@@ -151,32 +213,30 @@ export default{
                 </td> 
             </tr>
             </table>
-            <b-container>
-                <pagination></pagination>
-            </b-container>
+            <pagination></pagination>
+
 
         </template>
         <template v-if="states.add">
-            <add-user-form
+            <add-loan-form
                 v-bind:loans= 'loans'
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                v-bind:debug= 'states.debug'
-                v-on:cancel-to-user-page="states.add = $event"
-                v-on:add-to-user-page="states.submit = $event"
-            ></add-user-form>
+                v-bind:states= 'states'
+                v-on:cancel-to-loan-page="states.add = $event"
+                v-on:add-to-loan-page="states.submit = $event"
+            ></add-loan-form>
         </template>
         <template v-if="states.edit">
-            <edit-user-form
+            <edit-loan-form
                 v-bind:loans= 'loans'
                 v-bind:formData= 'formData'
                 v-bind:errors= 'errors'
                 v-bind:success= 'success'
-                v-bind:debug= 'states.debug'
-                v-on:cancel-to-user-page="states.cancel = $event"
-                v-on:edit-to-user-page="states.submit = $event"
-            ></edit-user-form>
+                v-on:cancel-to-loan-page="states.cancel = $event"
+                v-on:edit-to-loan-page="states.submit = $event"
+            ></edit-loan-form>
         </template>
     </div>
     `

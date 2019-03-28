@@ -145,14 +145,12 @@ export default{
             return 0;
         },
         add: function () {
-            this.logger('info', this.$root.$data.userState)
-            if(this.$root.$data.userState) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.add = true;
-                this.states.table = false;
-            }
+            this.clearForms(this.formData);
+            this.clearErrors(this.errors);
+            this.clearSuccess(this.success);
+            this.states.add = true;
+            this.states.table = false;
+
         },
         clearErrors: function(errors) {
             errors.username = null;
@@ -225,9 +223,9 @@ export default{
             <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
         </b-alert>
         <template v-if="states.table">
-            <b-container><b-form-group>
+            <b-form-group>
                 <b-button size='sm' variant="success" v-on:click="add">Add User</b-button>
-            </b-form-group></b-container>
+            </b-form-group>
   
             <table  class="table table-bordered">
             <tr>
@@ -254,9 +252,9 @@ export default{
                 </td> 
             </tr>
             </table>
-            <b-container>
-                <pagination></pagination>
-            </b-container>
+
+            <pagination></pagination>
+
 
         </template>
         <template v-if="states.add">
