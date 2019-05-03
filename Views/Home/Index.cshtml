@@ -1,41 +1,75 @@
 ﻿
 <div id="app">
 
-  <template>
-    <b-navbar type="dark" variant="dark">
-      <b-navbar-nav>
-        <b-nav-item to="/">Home</b-nav-item>
-        <b-nav-item to="/Positions">Positions</b-nav-item>
-        <b-nav-item to="/Loans">Loans</b-nav-item>
-        <b-nav-item to="/Banks">Banks</b-nav-item>
-        <b-nav-item to="/users">Users</b-nav-item>
-        <!-- Navbar dropdowns -->
-        <b-nav-item-dropdown text="User" right>
-          <b-dropdown-item href="#">Account</b-dropdown-item>
-          <b-dropdown-item href="#">Settings</b-dropdown-item>
-          <b-dropdown-item href="#">Sign Out</b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
-    </b-navbar>
-  </template>
-  </p>
-  <!-- route outlet -->
-  <!-- component matched by the route will render here -->
-  <router-view ></router-view>
-  
-    <template>
-        <div class="loading" v-if="loading">
-        Loading...
-        </div>
+<template>
+  <v-toolbar
+    centered
+    color="cyan"
+    dark
+    icons-and-text
+  >
+    <v-toolbar-side-icon></v-toolbar-side-icon>
+    <v-toolbar-title>Financial Tracker</v-toolbar-title>
+    <template v-slot:extension>
+      <v-tab href="#tab-1" to="/">
+        Home
+        <v-icon>home</v-icon>
+      </v-tab>
+
+      <v-tab href="#tab-2" to="/Positions">
+        Positions
+        <v-icon>people</v-icon>
+      </v-tab>
+
+      <v-tab href="#tab-3" to="/Loans">
+        Loans
+        <v-icon>money</v-icon>
+      </v-tab>
+      
+      <v-tab href="#tab-3" to="/Banks">
+        Banks
+        <v-icon>money</v-icon>
+      </v-tab>
+      <v-tab href="#tab-3" to="/Users">
+        Users
+        <v-icon>people</v-icon>
+      </v-tab>
     </template>
 
+    <v-spacer></v-spacer>
+
+    <v-btn icon>
+      <v-icon>search</v-icon>
+    </v-btn>
+
+    <v-btn icon>
+      <v-icon>apps</v-icon>
+    </v-btn>
+
+    <v-btn icon>
+      <v-icon>refresh</v-icon>
+    </v-btn>
+
+    <v-btn icon>
+      <v-icon>more_vert</v-icon>
+    </v-btn>
+  </v-toolbar>
+</template>
+    
+   
+    <router-view ></router-view>
+    
+      <template>
+          <div class="loading" v-if="loading">
+          Loading...
+          </div>
+      </template>
+</v-app>
 
 </div>
 @section Scripts {
-    <script type="module" src="~/js/pages/userPage.js"></script>
-    <script type="module" src="~/js/components/debugButton.js"></script>
+
     <script type="text/javascript" src="~/js/services/validate.js"></script>
-    <script type="text/javascript" src="~/js/services/userRequests.js"></script>
     <script type="module" src="~/js/app.js"></script>
     
 }

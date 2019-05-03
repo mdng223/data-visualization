@@ -44,6 +44,21 @@ namespace Networth.Controllers
             return Json(loanList);
         }
 
+        [HttpPut("api/[controller]/hide")]
+        public ActionResult HideLoan(HideModel hideModel) {
+            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
+            try {
+                Loan l =_context.Loans.FirstOrDefault(a => a.LoanId == hideModel.Id);
+                if(l == null) {
+                    return BadRequest();
+                }
+                l.Hidden = true;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("Bank delete failed. " + e);
+            }
+            return Json(hideModel.Id);
+        }
         [HttpGet("api/[controller]/{id}")]
         public IActionResult GetLoanId(int id) {
             return Ok(_context.Loans.Find(id));

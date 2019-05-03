@@ -2,8 +2,8 @@ import Home from './pages/homePage.js'
 import UserPage from './pages/userPage.js'
 import NotFound from './pages/notFound.js'
 import PositionPage from './pages/positionPage.js'
+import BankPage from './pages/bankPage.js'
 import LoanPage from './pages/loanPage.js'
-import DebugButton from './components/debugButton.js'
 
 
 // 2. Define some routes
@@ -15,7 +15,8 @@ const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/Positions', name: 'Positions', component: PositionPage },
   { path: '/loans', name: 'Loans', component: LoanPage },
-  { path: '/users', 
+  { path: '/banks', name: 'Banks', component: BankPage },
+  { path: '/users',
     name: 'Users', 
     components: { default: UserPage },
     props: {default: true}
@@ -35,17 +36,14 @@ const router = new VueRouter({
 // whole app router-aware.
 
 var store = {
-  debug: true,
   state: {
     user: false,
     loading: false,
   },
   setMessageAction (newValue) {
-    if (this.debug) console.log('setMessageAction triggered with', newValue)
     this.state.message = newValue
   },
   clearMessageAction () {
-    if (this.debug) console.log('clearMessageAction triggered')
     this.state.message = ''
   }
 }
@@ -59,44 +57,28 @@ const app = new Vue({
   },
   data: {
     users: '',
-    debug: true,
     loading: store.state.loading,
     userState: store.state.user,
   },
-  created () {
-    console.log("created");
-  },
-  computed: {
-    computeDebug() {
-      return this.debug;
-    }
-  }, 
   watch: {
     '$route': 'determineRoute',
-    computeDebug: function(val) {
-      this.logger('info', 'Debug set to ' + this.debug);
-    }
   },
   methods: {
-    toggleDebug() {
-      this.debug = !this.debug;
-    },
     determineRoute() {
-
      switch (this.$route.name) {
       case "Home":
         break;
       case "Positions":
         this.userState = false;
         break;
-      case "Users":
-        this.fetchUsers();
-        break;
-      case "Foo":
-        this.userState = false;
-        break;
       case "Loans":
         this.userState = false;
+        break;
+      case "Banks":
+        this.fetchUsers();
+        break;
+      case "Users":
+        this.fetchUsers();
         break;
       default:
         this.userState = false;

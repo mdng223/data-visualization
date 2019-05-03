@@ -1,8 +1,10 @@
-import AddLoanForm from '../components/addLoanForm.js'
-import Pagination from '../components/pagination.js'
+import AddLoanForm from '../forms/addLoanForm.js'
+import EditLoanForm from '../forms/editLoanForm.js'
+import LoanEntries from '../entries/loanEntries.js'
 
 Vue.component('addLoanForm', AddLoanForm);
-Vue.component('pagination', Pagination);
+Vue.component('editLoanForm', EditLoanForm);
+Vue.component('loanEntries', LoanEntries);
 
 
 export default{
@@ -18,7 +20,6 @@ export default{
                 add: false,
                 edit: false,
                 table: true,
-                debug: true,
                 submit: false,
                 cancel: false,
             },
@@ -102,7 +103,13 @@ export default{
     },
     methods: {
         edit: function (loan) {
-           
+            this.states.edit = true;
+            this.states.table = false;
+            this.title = loan.loanName;
+
+            this.formData.loanId = loan.loanId;
+            this.formData.loanName = loan.loanName;
+            this.formData.interestRate = loan.interestRate;
         },
         add: function () {
             this.clearForms(this.formData);
@@ -124,7 +131,7 @@ export default{
             var confirm = window.confirm("Are you sure?");
             if (confirm) {
                 let data = {};
-                data.id = loan.id;
+                data.id = loan.loanId;
                 axios({
                     method: 'Put',
                     url: 'api/Loan/hide',
@@ -237,6 +244,15 @@ export default{
                 v-on:cancel-to-loan-page="states.cancel = $event"
                 v-on:edit-to-loan-page="states.submit = $event"
             ></edit-loan-form>
+        </template>
+        <template>
+            <h4>TODO:</h4>
+            <ol>
+                <li>Create</li>
+                <li>Update</li>
+                <li>Remove</li>
+                <li>History</li>
+            </ol>
         </template>
     </div>
     `

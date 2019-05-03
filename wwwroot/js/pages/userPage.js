@@ -1,282 +1,402 @@
-import AddUserForm from '../components/addUserForm.js'
-import EditUserForm from '../components/editUserForm.js'
-import Pagination from '../components/pagination.js'
-
-Vue.component('addUserForm', AddUserForm);
-Vue.component('editUserForm', EditUserForm);
-Vue.component('pagination', Pagination);
-
+import Constants from '../services/constants.js'
+import Requests from '../services/requests.js'
 
 export default{
     name: 'user-table',
     data: function() {
         return {
-            users: '',
-            title: '',
-            dismissSecs: 3,
-            dismissCountDown: 0,
-            alert: '',
-            states: {
-                add: false,
-                edit: false,
-                table: true,
-                submit: false,
-                cancel: false,
+            search: '',
+            roles: [],
+            users: [],
+            editedIndex: -1,
+            dialog: false,
+            headers: [
+              {
+                text:     'Username',
+                align:    'left',
+                sortable: false,
+                value:    'username'
+              },
+              { text: 'Email', value: 'email' },
+              { text: 'Role', value: 'role' },
+              { text: 'Action', value: 'name', sortable: false }
+            ],
+            snackbar: {
+              state:      false,
+              color:      '',
+              mode:       '',
+              timeout:    5000,
+              text:       'Success',
+              top:        true,
             },
-            formData: {
-                id: '',
-                username: '',
-                email: '',
-                roleName: '',
-                password: '',
-                password2: '',  
+            rules: {
+              required:       value =>
+                              !!value
+                              || Constants.common.required,
+              usernameLength: value =>
+                              !!value
+                              && value.length >= 4
+                              && value.length <= 20
+                              || Constants.user.usernameLength,
+              passwordLength: value =>
+                              !!value
+                              && value.length >= 8
+                              && value.length <= 50
+                              || Constants.user.passwordLength,
+              lowercase:      value =>
+                              Constants.patterns.lowercase.test(value)
+                              || Constants.user.lowercase,
+              uppercase:      value =>
+                              Constants.patterns.uppercase.test(value)
+                              || Constants.user.uppercase,
+              number:         value =>
+                              Constants.patterns.number.test(value)
+                              || Constants.user.number,
+              email:          value => 
+                              !!value
+                              && Constants.patterns.email.test(value)
+                              || Constants.user.email,
+              uniqueUsername: value =>
+                              this.uniqueValue(value, this.getUsernames(this.users.length), value.length)
+                              || Constants.user.uniqueUsername,
+              uniqueEmail:    value =>
+                              this.uniqueValue(value, this.getEmails(this.users.length), value.length)
+                              || Constants.user.uniqueEmail,
+              passwordMatch:  value =>
+                              value == this.editedUser.password
+                              || Constants.user.passwordMatch,
             },
-            errors: {
-                username: null,
-                password: '',
-                password2: null,
-                email: null,
-                role: null,
+            editedUser: {
+              id: 0,
+              username: '',
+              email: '',
+              positions: 0,
+              roleId: 0,
+              roleName: '',
+              password: '',
+              password2: '',
             },
-            success: {
-                username: null,
-                email: null,
-                password: null,
-                password2: null,
-            }, 
+            defaultUser: {
+              id: 0,
+              username: '',
+              email: '',
+              positions: 0,
+              roleId: 0,
+              roleName: '',
+              password: '',
+              password2: '',
+            },
         }
+    },
+    created() {
     },
     mounted()  {
-        axios.get('api/User')
-        .then((response) => {
-          this.users = response.data;
-        })
-        .catch(error => (console.log(error)));
+      Requests.user.get(this);
+      Requests.role.get(this);
     },
     computed: {
-        computeAddState() {
-          return this.states.add;
+        formTitle () {
+          return this.editedIndex === -1 ? Constants.user.newUser : Constants.user.editUser
         },
-        computeEditState() {
-            return this.states.edit;
-        },
-        computeSubmitState() {
-            return this.states.submit;
-        },
-        computeCancelState() {
-            return this.states.cancel;
-        }
     },
     watch: {
-        computeAddState: function(val) {
-            if(val == false) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.states.add = false;
-            }
+        dialog (val) {
+          val || this.close()
         },
-        computeEditState: function(val) {
-            if(val == false && this.states.cancel) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.showAlert(this.title + ' edited successfully!');
-            }
-        },
-        computeSubmitState: function(val) {
-            if (val == true) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.states.submit = false;
-                this.states.add = false;
-                this.states.edit = false;
-                axios.get('api/User')
-                .then((response) => {
-                  this.users = response.data;
-                })
-                .catch(error => (console.log(error)))
-                .then( this.showAlert('User added successfully!') );
-            }
-        },
-        computeCancelState: function(val) {
-            if(val == true) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.states.add = false;
-                this.states.edit = false;
-                this.states.cancel = false;
-            }
-        }
     },
     methods: {
-        edit: function (user) {
-            this.states.edit = true;
-            this.states.table = false;
-            this.title = user.username;
-
-            this.formData.id = user.id;
-            this.formData.email = user.email;
-            this.formData.roleName = user.roleName;
-            this.formData.username = user.username;
-            this.formData.roleId = this.getRoleId(this.formData.roleName);
+        save () {
+          let data = {
+            'email': this.editedUser.email,
+            'roleId': this.getRoleId(this.editedUser.roleName)
+          };
+          if (this.editedIndex > -1) { /* EDIT USER */
+            if (this.rules.email(this.editedUser.email) == Constants.user.email) {
+              this.snackbar.text = Constants.common.editFailure + this.editedUser.username;
+              this.snackbar.color = "red";
+              this.snackbar.state = true;
+            } else {
+              Object.assign(this.users[this.editedIndex - 1], this.editedUser);
+              data.id = this.editedUser.id;
+              Requests.user.edit(data);
+              this.snackbar.text = Constants.common.editSuccess + this.editedUser.username;
+              this.snackbar.color = "success";
+              this.snackbar.state = true;
+              this.close();
+            }
+          } else { /* ADD USER */
+            if (
+              this.rules.usernameLength(this.editedUser.username) == Constants.user.usernameLength
+              || this.rules.uniqueUsername(this.editedUser.username) == Constants.user.uniqueUsername
+              || this.rules.email(this.editedUser.email) == Constants.user.email
+              || this.rules.uniqueEmail(this.editedUser.email) == Constants.user.uniqueEmail
+              || this.rules.passwordLength(this.editedUser.password) == Constants.user.passwordLength
+              || this.rules.lowercase(this.editedUser.password) == Constants.user.lowercase
+              || this.rules.uppercase(this.editedUser.password) == Constants.user.uppercase
+              || this.rules.number(this.editedUser.password) == Constants.user.number
+              || this.rules.passwordMatch(this.editedUser.password2) == Constants.user.passwordMatch
+              || this.rules.required(this.editedUser.roleName) == Constants.common.required
+              ) {
+              this.snackbar.text = Constants.user.addFailure + this.editedUser.username;
+              this.snackbar.color = 'red';
+              this.snackbar.state = true;
+            } else {
+              this.users.push(this.editedUser)
+              data.username = this.editedUser.username;
+              data.password = this.editedUser.password;
+              data.roleName = this.editedUser.roleName;
+              data.roleId = this.getRoleId(this.editedUser.roleName)
+              console.log(data);
+              Requests.user.add(data);
+              this.snackbar.text = Constants.user.addSuccess + this.editedUser.username;
+              this.snackbar.color = 'success';
+              this.snackbar.state = true;
+              this.close();
+            }
+          }
         },
-        logger: function(logLevel, message) {
-            var today = new Date();
-            var date = (today.getMonth()+1)+'-'+today.getDate()+'-'+today.getFullYear();
-            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            var dateTime = date+' '+time;
-            console.log( dateTime + ' :: ' + logLevel + ' :: ' + message );
+        edit (user) {
+            this.dialog = true;
+            this.editedUser = Object.assign({}, user);
+            this.editedIndex = this.editedUser.id;
+            this.editedUser.roleId = this.getRoleId(this.editedUser.roleName);
         },
-        getRoleId: function(roleName) {
-            if (roleName == 'Administrator'){
+        getRoleId (roleName) {
+            if (roleName == Constants.roles.administrator){
                 return 1;
-            } else if (roleName == 'Manager') {
+            } else if (roleName == Constants.roles.manager) {
                 return 2;
-            } else if (this.formData.roleName == 'User') {
+            } else if (roleName == Constants.roles.user) {
                 return 3;
             }
             return 0;
         },
-        add: function () {
-            this.clearForms(this.formData);
-            this.clearErrors(this.errors);
-            this.clearSuccess(this.success);
-            this.states.add = true;
-            this.states.table = false;
-
-        },
-        clearErrors: function(errors) {
-            errors.username = null;
-            errors.password = null;
-            errors.password2 = null;
-            errors.email = null;
-            errors.role = '';
-        },
-        clearForms: function(forms) {
-            this.formData.id = '';
-            this.formData.username = '';
-            this.formData.email = '';
-            this.formData.roleName = '';
-            this.formData.password = '';
-            this.formData.password2 = '';
-        },
-        clearSuccess: function(success) {
-            success.username = null;
-            success.email = null;
-            success.password = null;
-            success.password2 = null;
-        },
-        remove: function(user) {
-            var confirm = window.confirm("Are you sure?");
-            if (confirm) {
-                let data = {};
-                data.id = user.id;
-                axios({
-                    method: 'Put',
-                    url: 'api/User/hide',
-                    data: data,
-                    headers:{'Content-Type': 'application/json; charset=utf-8'},
-                  })
-                  .then(function (response) {
-                    console.log(response);
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                  })
-                  .then( () => {
-                    axios.get('api/User')
-                    .then((response) => {
-                      this.users = response.data;
-                    })
-                    .catch(error => (console.log(error)))
-                    .then( this.showAlert('User deleted successfully!') );
-                  });
+        deleteUser (id) {
+          for (var user in this.users){
+            console.log(id, this.users[user].id);
+            if (id == this.users[user].id) {
+              confirm(Constants.user.deleteUser) && this.users.splice(user, 1);
+              let data = {
+                'id': id
+              }
+              Requests.user.delete(data);
+              return;
             }
+          }
         },
-        countDownChanged(dismissCountDown) {
-            this.dismissCountDown = dismissCountDown;
+        close () {
+          this.dialog = false
+          setTimeout(() => {
+            this.editedUser = Object.assign({}, this.defaultUser)
+            this.editedIndex = -1
+          }, 300)
         },
-        showAlert(alert) {
-            window.scrollTo(0, 0);
-            this.alert = alert;
-            this.dismissCountDown = this.dismissSecs;
-        }
+        uniqueValue (val, list, length) {
+          for (let i = 0; i < length; i++) {
+            if (val == list[i]){
+                return false; /* not unique */
+            }
+          }
+          return true; /* unique */
+        },
+        getUsernames (length) {
+          let usernames = [];
+          for (let i = 0; i < length; i++){ 
+              usernames.push(this.users[i].username);
+          }
+          return usernames;
+        },
+        getEmails (length) {
+          let emails = [];
+          for (let i = 0; i < length; i++) {
+              emails.push(this.users[i].email);
+          }
+          return emails;
+        },
     },
     template: `
     <div>
-
-        <b-alert
-            :show="dismissCountDown"
-            dismissible
-            variant="success"
-            @dismissed="dismissCountDown=0"
-            @dismiss-count-down="countDownChanged"
+      <template>
+        <v-snackbar
+        v-model="snackbar.state"
+        :color="snackbar.color"
+        :multi-line="'multi-line'"
+        :timeout="snackbar.timeout"
+        :top="snackbar.top"
+        :vertical="'vertical'"
         >
-            <p>{{ alert }}</p>
-            <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
-        </b-alert>
-        <template v-if="states.table">
-            <b-form-group>
-                <b-button size='sm' variant="success" v-on:click="add">Add User</b-button>
-            </b-form-group>
-  
-            <table  class="table table-bordered">
-            <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
+          {{ snackbar.text }}
+          <v-btn
+            dark
+            flat
+            color="white"
+            @click="snackbar.state = false"
+          >
+            Close
+          </v-btn>
+        </v-snackbar>
+        <v-divider class="mx-2" inset vertical></v-divider>
+        <v-toolbar flat color="white">
+          <v-toolbar-title>Users</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
 
-            <tr v-for="(user, index) in users">
-                <td> {{ user.username }} </td>
-                <td> {{ user.email }} </td>
-                <td> {{ user.roleName }} </td>
-                <td>
-                    <div class="mx-auto" style="width: 50px;">
-                        <button class='btn btn-warning btn-sm' v-on:click="edit(user)"> Edit </button>
-                    </div>
-                </td>
-                <td>
-                    <div class="mx-auto" style="width: 50px;">
-                        <button class='btn btn-danger btn-sm' v-on:click="remove(user)"> Delete </button>
-                    </div>
-                </td> 
-            </tr>
-            </table>
+          <v-divider class="mx-2" inset vertical></v-divider>
+        
 
-            <pagination></pagination>
+        <!--- ADD AND EDIT FORM -->
+          <v-dialog v-model="dialog" max-width="500px">
+          
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" dark class="mb-2" v-on="on">New User</v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
 
 
-        </template>
-        <template v-if="states.add">
-            <add-user-form
-                v-bind:users= 'users'
-                v-bind:formData= 'formData'
-                v-bind:errors= 'errors'
-                v-bind:success= 'success'
-                v-on:cancel-to-user-page="states.add = $event"
-                v-on:add-to-user-page="states.submit = $event"
-            ></add-user-form>
-        </template>
-        <template v-if="states.edit">
-            <edit-user-form
-                v-bind:users= 'users'
-                v-bind:formData= 'formData'
-                v-bind:errors= 'errors'
-                v-bind:success= 'success'
-                v-on:cancel-to-user-page="states.cancel = $event"
-                v-on:edit-to-user-page="states.submit = $event"
-            ></edit-user-form>
-        </template>
+              <v-card-text>
+                <v-container grid-list-md>
+                  <v-layout wrap>
+<!-- EDIT USER -->
+                    <template v-if='editedIndex > -1'>
+                      <v-flex xs12 sm6 md12>
+                        <v-text-field 
+                        v-model="editedUser.username"
+                        label="Username"
+                        outline
+                        clearable
+                        disabled
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md12>
+                        <v-text-field 
+                         clearable
+                         v-model="editedUser.email"
+                         label="Email"
+                         outline
+                         clearable
+                         :rules="[rules.email]"
+                         ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md12>
+                        <v-overflow-btn
+                          :items="roles"
+                          label="Roles"
+                          outline
+                          clearable
+                          :placeholder="editedUser.roleName"
+                          v-model="editedUser.roleName"
+                        ></v-overflow-btn>
+                      </v-flex>
+                    </template>
+
+<!-- ADD USER -->
+                    <template v-else>
+                      <v-flex xs12 sm6 md12>
+                        <v-text-field
+                         v-model="editedUser.username"
+                         label="Username"
+                         outline
+                         clearable
+                         :rules="[rules.usernameLength, rules.uniqueUsername]"
+                         counter="20"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md12>
+                        <v-text-field
+                         v-model="editedUser.password"
+                         label="Password"
+                         outline
+                         clearable
+                         :rules="[rules.passwordLength, rules.lowercase, rules.uppercase, rules.number]"
+                         counter="50"
+                         ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md12>
+                        <v-text-field
+                         v-model="editedUser.password2"
+                         label="Confirm Password"
+                         clearable
+                         outline
+                         :rules="[rules.passwordMatch]"
+                         counter="50"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md12>
+                        <v-text-field 
+                         clearable
+                         v-model="editedUser.email"
+                         label="Email"
+                         outline
+                         :rules="[rules.email, rules.uniqueEmail]"
+                         ></v-text-field>
+                      </v-flex>
+                      <v-overflow-btn
+                        :items="roles"
+                        label="Roles"
+                        clearable
+                        outline
+                        :rules="[rules.required]"
+                        v-model="editedUser.roleName"
+                      ></v-overflow-btn>
+                    </template>
+                    
+                  </v-layout>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn flat color="blue-grey" @click="close">
+                  <v-icon left dark>cancel</v-icon>  
+                  Cancel</v-btn>
+                <v-btn flat color="blue darken-2" @click="save">
+                  <v-icon left dark>person_add</v-icon>
+                  Save
+                
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+        
+        
+        <v-app>
+          <v-data-table :headers="headers" :items="users" :search="search" class="elevation-1">
+
+            <template v-slot:no-data>
+                <v-alert :value="true" color="error" icon="warning">
+                Sorry, nothing to display here :(
+                </v-alert>
+            </template>
+
+
+            <template v-slot:items="props">
+              <td>{{ props.item.username }}</td>
+              <td class="text-xs-left">{{ props.item.email }}</td>
+              <td class="text-xs-left">{{ props.item.roleName }}</td>  
+              <td class="text-xs-left">
+                <v-icon color='green darken-2' small class="mr-2" @click="edit(props.item)">
+                  edit
+                </v-icon>
+                <v-icon color='red darken-2' small @click="deleteUser(props.item.id)">
+                  delete
+                </v-icon>
+              </td>
+            </template>
+          </v-data-table>
+        </v-app>
+
+
+      </template>
     </div>
     `
   }

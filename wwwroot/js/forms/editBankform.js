@@ -1,8 +1,8 @@
 
 export default{
-    name: 'edit-user-form',
+    name: 'edit-bank-form',
     props: {
-        users: {
+        banks: {
             type: Array,
             required: true
         },
@@ -18,10 +18,6 @@ export default{
             type: Object,
             required: true
         },
-        debug: {
-            type: Boolean,
-            default: true,
-        }
     },
     data: function() {
         return {
@@ -46,7 +42,6 @@ export default{
         axios.get('api/Role')
         .then((response) => {
           this.roles = response.data;
-          if(this.debug) { this.logger('info', 'roles fetched.' + this.roles); }
         })
         .catch(error => (this.logger('error', 'roles could not be fetched.')));
 
@@ -76,8 +71,7 @@ export default{
     },
     methods: {
         cancel: function() {
-            this.$emit('cancel-to-user-page', true);
-            if(this.debug) { this.logger('info', 'cancel button clicked.'); }
+            this.$emit('cancel-to-bank-page', true);
         },
         logger: function(logLevel, message) {
             var today = new Date();
@@ -87,7 +81,6 @@ export default{
             console.log( dateTime + ' :: ' + logLevel + ' :: ' + message );
         },
         edit: function() {
-            if(this.debug) { this.logger('info', 'editUserForm :: edit button clicked.'); }
             if (this.formData.email == this.currentEmail &&
                 this.formData.roleName == this.currentRole) {
                 this.showAlert('Email and Role are the same, nothing to update.');
@@ -104,7 +97,7 @@ export default{
                 data.roleId = this.formData.roleId;
                 axios({
                     method: 'Put',
-                    url: 'api/User/edit',
+                    url: 'api/Bank/edit',
                     data: data,
                     headers:{'Content-Type': 'application/json; charset=utf-8'},
                   })
@@ -115,7 +108,7 @@ export default{
                     console.log(error);
                   })
                   .then( () => {
-                    this.$emit('edit-to-user-page', true);
+                    this.$emit('edit-to-bank-page', true);
                   })
             }
         },
@@ -124,7 +117,7 @@ export default{
                 return 1;
             } else if (roleName == 'Manager') {
                 return 2;
-            } else if (this.formData.roleName == 'User') {
+            } else if (this.formData.roleName == 'Bank') {
                 return 3;
             }
             return 0;
@@ -138,9 +131,9 @@ export default{
             return (re.test(str));
         },
         uniqueEmail: function (email) {
-            var length = this.users.length;
+            var length = this.banks.length;
             for (var i = 0; i < length; i++) {
-                if (email == this.users[i].email &&
+                if (email == this.banks[i].email &&
                     email != this.currentEmail) {
                     return false;
                 }
@@ -169,30 +162,28 @@ export default{
             <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
         </b-alert>
 
-        <h3 class='text-center'>{{ formData.username }} </h3>
-        <small class="form-text error">{{ errors.username }}</small>
-        <small class="form-text success">{{ success.username }}</small>
-
     <div class="form-group">
-        <label>Email</label>
-        <input type="text" class="form-control form-control-sm" placeholder="Example: fuck@you.com" v-model="formData.email" />
-            <small class="form-text error">{{ errors.email }}</small>
-            <small class="form-text success">{{ success.email }}</small>
+        <label>Bank Name</label>
+        <input type="text" class="form-control form-control-sm" v-model="formData.bankName" />
+            <small class="form-text error">{{ errors.bankName }}</small>
+            <small class="form-text success">{{ success.bankName }}</small>
     </div>
-
     <div class="form-group">
-        <label>Role</label> 
-        
-            <select class="form-control" v-model="formData.roleName">
-                <option v-for="role in roles">{{ role.roleName }}</option>
-            </select>
-        <small class="form-text error">{{ errors.role }}</small>
-        <small class="form-text success">{{ success.role }}</small>
+        <label>Balance</label>
+        <input type="text" class="form-control form-control-sm" v-model="formData.balance" />
+            <small class="form-text error">{{ errors.balance }}</small>
+            <small class="form-text success">{{ success.balance }}</small>
+    </div>
+    <div class="form-group">
+        <label>Interest Rate</label>
+        <input type="text" class="form-control form-control-sm" v-model="formData.interestRate" />
+            <small class="form-text error">{{ errors.interestRate }}</small>
+            <small class="form-text success">{{ success.interestRate }}</small>
     </div>
 
     <div class="form-group"></div>
         <button type="button" class="btn btn-danger" v-on:click="cancel">Cancel</button>
-        <button type="button" class="btn btn-primary" v-on:click="edit">Edit User</button>
+        <button type="button" class="btn btn-primary" v-on:click="edit">Edit Bank</button>
     </div>
     </form>
     `

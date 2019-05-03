@@ -19,10 +19,6 @@ export default{
             type: Object,
             required: true
         },
-        debug: {
-            type: Boolean,
-            default: true,
-        }
     },
     data: function() {
         return {
@@ -45,7 +41,6 @@ export default{
         axios.get('api/Role')
         .then((response) => {
           this.roles = response.data;
-          if(this.debug) { this.logger('info', 'roles fetched.' + this.roles); }
         })
         .catch(error => (this.logger('error', 'roles could not be fetched.')));
     },
@@ -68,7 +63,6 @@ export default{
     },
     watch: {
         computeUsername: function (val) {
-            if (this.debug) { this.logger('info', 'username =\t' + val);}
             let length = val.length, valid = false;
             if (!val) {
                 this.errors.username = 'Username is required';
@@ -88,7 +82,6 @@ export default{
             }
         },
         computePassword: function (val) {
-            if (this.debug) {this.logger('info', 'computePassword:\t' + val);}
             if (!val) {
                 this.errors.password = '- Password is required';
                 this.rules.password.forEach( function(element) {
@@ -233,14 +226,12 @@ export default{
         validateForms: function(errors, formData) {
             for (const [key, value] of Object.entries(errors)) {
                 if (value) { 
-                    if (this.debug) { this.logger('error', 'error.'+key+' has errors.'); }
                     return false; 
                 }
             }
 
             for (const [key, value] of Object.entries(formData)) {
                 if (key != 'id' && !value) {
-                    if (this.debug) { this.logger('error', 'formData.'+key+' is empty.'); }
                     return false;
                 }
                 
@@ -257,13 +248,7 @@ export default{
             }
             return usernames;
         },
-        getEmails: function(length) {
-            let emails = [];
-            for (let i = 0; i < length; i++) {
-                emails.push(this.users[i].email);
-            }
-            return emails;
-        },
+
         getRoleId: function(roleName) {
             if (roleName == 'Administrator'){
                 return 1;

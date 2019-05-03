@@ -1,20 +1,5 @@
 ﻿
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-  position: relative;
-  font-size: 10px;
-}
-@media (min-width: 700px) {
-  html {
-    font-size: 14px;
-    position: relative;
-    padding-left: 5%;
-    padding-right: 5%;
-  }
-}
-
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
@@ -24,20 +9,12 @@ html {
 
 /* Sticky footer styles
 -------------------------------------------------- */
-html {
-  min-height: 100%;
+
+.error {
+  color: red;
 }
 
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+.success {
+  color: green;
 }
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  /* Set the fixed height of the footer here */
-  height: 30px;
-  line-height: 30px; /* Vertically center the text there */
-}
+

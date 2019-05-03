@@ -16,6 +16,7 @@ namespace Networth.Entities.Bank
         [Required]
         public decimal Balance { get; set; }
         public decimal InterestRate { get; set;}
+        public bool Hidden { get; set; }
         public int UserId { get; set; }
         public int BankTypeId { get; set; }
     }

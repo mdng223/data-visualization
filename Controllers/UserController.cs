@@ -89,7 +89,7 @@ namespace Networth.Controllers
 
         [HttpPut("api/[controller]/edit")]
         public ActionResult EditUser(EditUserModel user) {
-            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", user.Id, user.Id.GetType());
+            Console.WriteLine("Editing ID:\t{0} ::\ttype: {1}", user.Id, user.Id.GetType());
             try {
                 User u =_context.Users.FirstOrDefault(a => a.Id == user.Id);
                 if(u == null) {

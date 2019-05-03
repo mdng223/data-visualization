@@ -32,7 +32,7 @@ namespace Networth.Controllers
                     positionData.PositionName = position.PositionName;
                     positionData.Symbol = position.Symbol;
                     positionData.Username = _context.Users.FirstOrDefault(a => a.Id == 
-                                        position.UserId).Username;
+                                            position.UserId).Username;
                     positionList.Add(positionData);
                 }
             }
@@ -42,7 +42,7 @@ namespace Networth.Controllers
 
         [HttpPost("api/[controller]")]
         public ActionResult PostPosition(Position Position) {
-             Console.WriteLine("GETS HERE");
+            Console.WriteLine("GETS HERE");
             Console.WriteLine("Position Name:\t{0} ::\ttype: {1}", Position.PositionName, Position.PositionName.GetType());
             Console.WriteLine("Symbol:\t{0} ::\ttype: {1}", Position.Symbol, Position.Symbol.GetType());
             Console.WriteLine("Symbol:\t{0} ::\ttype: {1}", Position.UserId, Position.UserId.GetType());
@@ -61,6 +61,28 @@ namespace Networth.Controllers
             }
 
             return Json("Position added successfully!");
+        }
+
+        [HttpPut("api/[controller]/edit")]
+        public ActionResult EditUser(EditPositionModel position) {
+            Console.WriteLine("Editing ID:\t{0} ::\ttype: {1}", position.Id, position.Id.GetType());
+            Console.WriteLine("Editing positionName:\t{0} ::\ttype: {1}", position.positionName, position.positionName.GetType());
+            Console.WriteLine("Editing symbol:\t{0} ::\ttype: {1}", position.symbol, position.symbol.GetType());
+            Console.WriteLine("Editing userId:\t{0} ::\ttype: {1}", position.userId, position.userId.GetType());
+            try {
+                Position p =_context.Positions.FirstOrDefault(a => a.PositionId == position.Id);
+                if(p == null) {
+                    return BadRequest();
+                }
+                p.PositionName = position.positionName;
+                p.Symbol = position.symbol;
+                p.UserId = position.userId;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("User delete failed. " + e);
+            }
+            //return Json(user.Username + " hidden!");
+            return Json(position.Id);
         }
 
         [HttpPut("api/[controller]/hide")]
