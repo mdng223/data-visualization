@@ -15,6 +15,7 @@ namespace Networth.Services
           public DbSet<Networth.Entities.Role.Role> Roles { get; set; }
           public DbSet<Networth.Entities.Bank.Bank> Banks { get; set; }
           public DbSet<Networth.Entities.BankType.BankType> BankTypes { get; set; }
+          public DbSet<Networth.Entities.MBTI.MBTI> MBTI { get; set; }
           public NetworthDbContext(
                DbContextOptions<NetworthDbContext> options)
                : base(options)

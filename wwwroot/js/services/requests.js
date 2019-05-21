@@ -97,5 +97,14 @@ export default {
       })
       .catch(error => (console.log(error)));
     }
+  },
+  mbti: {
+    get (that) {
+      axios.get('api/MBTI')
+      .then((response) => {
+        that.mbtis = response.data;
+      })
+      .catch(error => (console.log(error)));
+    }
   }
 }

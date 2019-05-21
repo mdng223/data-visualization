@@ -15,6 +15,7 @@ using Networth.Entities.BankType;
 using Networth.Entities.LoanEntry;
 using Networth.Entities.LoanType;
 using Networth.Entities.PositionType;
+using Networth.Entities.MBTI;
 using Networth.Services;
 using System.IO;
 using System;
@@ -281,6 +282,44 @@ namespace Networth.Services{
                     }
                    context.AddRange(pe);
                    context.AddRange(be);
+               }
+               context.SaveChanges();
+               if(!context.MBTI.Any()){
+                    var mbti = new List<Networth.Entities.MBTI.MBTI>();
+                    if (!File.Exists("services/mbti.csv")) {
+                         return;
+                    }
+                    string[] lines = File.ReadAllLines("services/mbti.csv");
+                    foreach(string line in lines){
+                         string[] split = line.Split(",");
+                         // int column = 0;
+                         // foreach(string i in split) {
+                         //      Console.WriteLine("{0}: {1}", i[0], Enum.IsDefined(typeof(TypeEnum), i[0]));
+                         //      column++;
+                         // }
+                         Console.WriteLine("first name =\t{0}", split[0]);
+                         Console.WriteLine("last name =\t{0}", split[1]);
+                         Console.WriteLine("gender =\t{0}, exists=\t{1}", split[2], Enum.IsDefined(typeof(GenderEnum), split[2]));
+                         Console.WriteLine("type  =\t{0}, exists=\t{1} ", split[3], Enum.IsDefined(typeof(TypeEnum), split[3]));
+                         Console.WriteLine("temperment =\t{0}, exists=\t{1}", split[4], Enum.IsDefined(typeof(TempermantEnum), split[4]));
+                         if(Enum.IsDefined(typeof(TypeEnum), split[3])
+                            && Enum.IsDefined(typeof(TypeEnum), split[3])
+                            && Enum.IsDefined(typeof(TempermantEnum), split[4])) {
+                              mbti.Add(new MBTI() {
+                                   FirstName = split[0],
+                                   LastName = split[1],
+                                   Gender = split[2],
+                                   Type = split[3],
+                                   Temperment = split[4],
+                                   Mind = split[3][0],
+                                   Energy = split[3][1],
+                                   Nature = split[3][2],
+                                   Tactic = split[3][3],
+                                   Hidden = false,
+                              });
+                         }
+                    }
+                    context.AddRange(mbti);
                }
                context.SaveChanges();
           }

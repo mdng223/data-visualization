@@ -1,6 +1,6 @@
 import Constants from '../services/constants.js'
 import Requests from '../services/requests.js'
-import requests from '../services/requests.js';
+import Common from '../services/common.js'
 
 export default{
     name: 'position-table',
@@ -11,6 +11,10 @@ export default{
             dialog:         false,
             search:         '',
             users:          [],
+            temp: {
+                positionName: '',
+                symbol: '',
+            },
             headers: [
                 {
                   text:     'Position Name',
@@ -40,10 +44,12 @@ export default{
                                 && value.length <= 20
                                 || Constants.position.positionLength,
                 uniquePosition: value =>
-                                this.uniqueValue(value, this.getPositions(this.positions.length), value.length)
+                                Common.uniqueValue(value, this.getPositions(this.positions.length),
+                                                   this.positions.length, this.temp.positionName)
                                 || Constants.position.uniquePosition,
                 uniqueSymbol:   value =>
-                                this.uniqueValue(value, this.getSymbols(this.positions.length), value.length)
+                                Common.uniqueValue(value, this.getSymbols(this.positions.length),
+                                                   this.positions.length, this.temp.symbol)
                                 || Constants.position.uniqueSymbol,
               },
             editedPosition: {
@@ -89,6 +95,7 @@ export default{
             this.dialog = true;
             Object.assign(this.editedPosition, position);
             this.editedIndex = this.editedPosition.positionId;
+            this.temp.symbol = this.editedPosition.symbol;
         },
         save () {
             let data = {
@@ -116,17 +123,9 @@ export default{
               }
             }
           },
-        uniqueValue (val, list, length) {
-            for (let i = 0; i < length; i++) {
-              if (val == list[i]){
-                  return false; /* not unique */
-              }
-            }
-            return true; /* unique */
-        },
         getSymbols (length) {
             let symbols = [];
-            for (let i = 0; i < length; i++){ 
+            for (let i = 0; i < length; i++){
                 symbols.push(this.positions[i].symbol);
             }
             return symbols;
@@ -196,23 +195,21 @@ export default{
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-layout wrap>
+<!-- EDIT -->
                                 <template v-if='editedIndex > -1'>
                                     <v-flex xs12 sm6 md12>
                                         <v-text-field 
                                             v-model="editedPosition.positionName"
                                             label="Position Name"
                                             outline
-                                            clearable
                                             disabled>
                                         </v-text-field>
                                     </v-flex>
                                     <v-flex xs12 sm6 md12>
                                         <v-text-field 
-                                            clearable
                                             v-model="editedPosition.symbol"
                                             label="Symbol"
                                             outline
-                                            clearable
                                             :rules="[rules.uniqueSymbol, rules.required]">
                                         </v-text-field>
                                     </v-flex>
@@ -221,7 +218,6 @@ export default{
                                         v-model="editedPosition.username"
                                         label="Username"
                                         outline
-                                        clearable
                                         disabled>
                                     </v-text-field>
                                   </v-flex>

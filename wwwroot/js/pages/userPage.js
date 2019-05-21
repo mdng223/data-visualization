@@ -1,5 +1,6 @@
 import Constants from '../services/constants.js'
 import Requests from '../services/requests.js'
+import Common from '../services/common.js'
 
 export default{
     name: 'user-table',
@@ -10,6 +11,8 @@ export default{
             users: [],
             editedIndex: -1,
             dialog: false,
+            tempEmail: '',
+            tempUsername: '',
             headers: [
               {
                 text:     'Username',
@@ -57,10 +60,12 @@ export default{
                               && Constants.patterns.email.test(value)
                               || Constants.user.email,
               uniqueUsername: value =>
-                              this.uniqueValue(value, this.getUsernames(this.users.length), value.length)
+                              Common.uniqueValue(value, this.getUsernames(this.users.length),
+                                               this.users.length, this.tempUsername)
                               || Constants.user.uniqueUsername,
               uniqueEmail:    value =>
-                              this.uniqueValue(value, this.getEmails(this.users.length), value.length)
+                              Common.uniqueValue(value, this.getEmails(this.users.length),
+                                               this.users.length, this.tempEmail)
                               || Constants.user.uniqueEmail,
               passwordMatch:  value =>
                               value == this.editedUser.password
@@ -70,7 +75,6 @@ export default{
               id: 0,
               username: '',
               email: '',
-              positions: 0,
               roleId: 0,
               roleName: '',
               password: '',
@@ -80,7 +84,6 @@ export default{
               id: 0,
               username: '',
               email: '',
-              positions: 0,
               roleId: 0,
               roleName: '',
               password: '',
@@ -111,12 +114,17 @@ export default{
             'roleId': this.getRoleId(this.editedUser.roleName)
           };
           if (this.editedIndex > -1) { /* EDIT USER */
-            if (this.rules.email(this.editedUser.email) == Constants.user.email) {
+            if (this.rules.email(this.editedUser.email) == Constants.user.email
+                || this.rules.uniqueEmail(this.editedUser.email) == Constants.user.uniqueEmail
+                || this.rules.required(this.editedUser.roleName) == Constants.common.required
+                || this.rules.required(this.editedUser.username) == Constants.common.required) {
               this.snackbar.text = Constants.common.editFailure + this.editedUser.username;
               this.snackbar.color = "red";
               this.snackbar.state = true;
             } else {
-              Object.assign(this.users[this.editedIndex - 1], this.editedUser);
+              //this.users[this.editedIndex - 1], this.editedUser);
+              Object.assign(this.users.find(u => u.username == this.editedUser.username),
+                            this.editedUser);
               data.id = this.editedUser.id;
               Requests.user.edit(data);
               this.snackbar.text = Constants.common.editSuccess + this.editedUser.username;
@@ -125,6 +133,7 @@ export default{
               this.close();
             }
           } else { /* ADD USER */
+            this.tempUsername = this.editedUser.username;
             if (
               this.rules.usernameLength(this.editedUser.username) == Constants.user.usernameLength
               || this.rules.uniqueUsername(this.editedUser.username) == Constants.user.uniqueUsername
@@ -160,6 +169,7 @@ export default{
             this.editedUser = Object.assign({}, user);
             this.editedIndex = this.editedUser.id;
             this.editedUser.roleId = this.getRoleId(this.editedUser.roleName);
+            this.tempEmail = this.editedUser.email;
         },
         getRoleId (roleName) {
             if (roleName == Constants.roles.administrator){
@@ -173,7 +183,6 @@ export default{
         },
         deleteUser (id) {
           for (var user in this.users){
-            console.log(id, this.users[user].id);
             if (id == this.users[user].id) {
               confirm(Constants.user.deleteUser) && this.users.splice(user, 1);
               let data = {
@@ -190,14 +199,6 @@ export default{
             this.editedUser = Object.assign({}, this.defaultUser)
             this.editedIndex = -1
           }, 300)
-        },
-        uniqueValue (val, list, length) {
-          for (let i = 0; i < length; i++) {
-            if (val == list[i]){
-                return false; /* not unique */
-            }
-          }
-          return true; /* unique */
         },
         getUsernames (length) {
           let usernames = [];
@@ -283,7 +284,7 @@ export default{
                          label="Email"
                          outline
                          clearable
-                         :rules="[rules.email]"
+                         :rules="[rules.email, rules.uniqueEmail]"
                          ></v-text-field>
                       </v-flex>
                       <v-flex xs12 sm6 md12>
@@ -291,7 +292,6 @@ export default{
                           :items="roles"
                           label="Roles"
                           outline
-                          clearable
                           :placeholder="editedUser.roleName"
                           v-model="editedUser.roleName"
                         ></v-overflow-btn>

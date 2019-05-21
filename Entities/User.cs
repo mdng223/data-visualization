@@ -22,7 +22,7 @@ namespace Networth.Entities.User
           [Required, MaxLength(50), MinLength(6)]
           public string Email { get; set; }
           public DateTime DateAdded { get; set; } 
-          public bool Hidden {get; set; }
+          public bool Hidden { get; set; }
 
           public virtual ICollection<Bank.Bank> Banks { get; set; }
           public virtual ICollection<Position.Position> Positions { get; set; }

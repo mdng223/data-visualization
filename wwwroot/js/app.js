@@ -4,6 +4,7 @@ import NotFound from './pages/notFound.js'
 import PositionPage from './pages/positionPage.js'
 import BankPage from './pages/bankPage.js'
 import LoanPage from './pages/loanPage.js'
+import MBTIPage from './pages/MBTIPage.js'
 
 
 // 2. Define some routes
@@ -21,6 +22,7 @@ const routes = [
     components: { default: UserPage },
     props: {default: true}
   },
+  { path: '/mbti', name: 'MBTI', component: MBTIPage },
   { path: '*', name: '404', component: NotFound}
 ]
 
