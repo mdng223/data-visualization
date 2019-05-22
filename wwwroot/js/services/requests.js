@@ -98,13 +98,41 @@ export default {
       .catch(error => (console.log(error)));
     }
   },
-  mbti: {
+  mbti: {   
+    delete: function(data) {
+      axios({
+        method: 'Put',
+        url: 'api/MBTI/hide',
+        data: data,
+        headers:{'Content-Type': 'application/json; charset=utf-8'},
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    // edit: function( data) {
+    //   axios({
+    //     method: 'Put',
+    //     url: 'api/MBTI/edit',
+    //     data: data,
+    //     headers:{'Content-Type': 'application/json; charset=utf-8'},
+    //   })
+    //   .then(function (response) {
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
+    // },
     get (that) {
       axios.get('api/MBTI')
       .then((response) => {
         that.mbtis = response.data;
       })
       .catch(error => (console.log(error)));
-    }
-  }
+    },
+  },  
 }

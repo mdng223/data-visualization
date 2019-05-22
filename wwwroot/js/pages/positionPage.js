@@ -19,12 +19,12 @@ export default{
                 {
                   text:     'Position Name',
                   align:    'left',
-                  sortable: false,
+                  sortable: true,
                   value:    'positionName'
                 },
                 { text: 'Symbol', value: 'symbol' },
                 { text: 'Username', value: 'username' },
-                { text: 'Action', value: 'name', sortable: false }
+                { text: 'Action', sortable: false }
             ],
             snackbar: {
                 state:      false,

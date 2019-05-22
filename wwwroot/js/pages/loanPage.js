@@ -166,23 +166,14 @@ export default{
             return element.slice(0, index);
         }
     },
-    template: `
+    template:
+    `
     <div>
-        <b-alert
-            :show="dismissCountDown"
-            dismissible
-            variant="success"
-            @dismissed="dismissCountDown=0"
-            @dismiss-count-down="countDownChanged"
-        >
-            <p>{{ alert }}</p>
-            <b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="4px" />
-        </b-alert>
         <template v-if="states.table">
             <b-form-group>
                 <b-button size='sm' variant="success" v-on:click="add">Add Loan</b-button>
             </b-form-group>
-  
+      
             <table  class="table table-bordered">
             <tr>
                 <th>Loan Name</th>
@@ -195,7 +186,6 @@ export default{
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
-
             <tr v-for="(loan, index) in loans">
                 <td> {{ loan.loanName }} </td>
                 <td> {{ loan.loanType }} </td>
@@ -221,8 +211,6 @@ export default{
             </tr>
             </table>
             <pagination></pagination>
-
-
         </template>
         <template v-if="states.add">
             <add-loan-form

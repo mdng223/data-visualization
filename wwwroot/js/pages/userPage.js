@@ -347,8 +347,7 @@ export default{
                         :rules="[rules.required]"
                         v-model="editedUser.roleName"
                       ></v-overflow-btn>
-                    </template>
-                    
+                    </template>                    
                   </v-layout>
                 </v-container>
               </v-card-text>

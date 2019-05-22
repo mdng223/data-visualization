@@ -24,6 +24,7 @@ namespace Networth.Controllers
             foreach (MBTI mbti in _context.MBTI) {
                 if (mbti.Hidden == false) {
                     MbtiModel mm = new MbtiModel();
+                    mm.Id = mbti.Id;
                     mm.FirstName = mbti.FirstName;
                     mm.LastName = mbti.LastName;
                     mm.Type = mbti.Type;
@@ -37,6 +38,23 @@ namespace Networth.Controllers
                 }
             }
             return Json(mbtiList);
+        }
+
+
+        [HttpPut("api/[controller]/hide")]
+        public ActionResult Hide(HideModel hideModel) {
+            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
+            try {
+                MBTI person =_context.MBTI.FirstOrDefault(a => a.Id == hideModel.Id);
+                if(person == null) {
+                    return BadRequest();
+                }
+                person.Hidden = true;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("MBTI hide failed. " + e);
+            }
+            return Json(hideModel.Id);
         }
     }
 }
