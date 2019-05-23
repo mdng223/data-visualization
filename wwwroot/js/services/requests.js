@@ -75,6 +75,15 @@ export default {
       .catch(error => (console.log(error)));
     },
   },
+  loan: {
+    get (that) {
+      axios.get('api/Loan')
+      .then((response) => {
+        that.loans = response.data;
+      })
+      .catch(error => (console.log(error)));
+    }
+  },
   position: {
     edit: function(data) {
       axios({

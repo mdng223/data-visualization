@@ -12,12 +12,19 @@ export default {
       <li> MBTI: Male:Female pie chart </li>
       <li> MBTI: type bar chart </li>
       <li> MBTI: NF vs NT vs SJ vs SP pie chart </li>
+      <li> MBTI: add </li>
       <li> MBTI: edit feature </li>
       <li> SHOWS: bar chart for 1-10 shows for half ints and ints</li>
       <li> SHOWS: create entity </li>
       <li> SHOWS: create controller </li>
       <li> SHOWS: create model </li>
       <li> SHOWS: create page.js </li>
+      <li> LOANS: graph  </li>
+      <li> LOANS: delete  </li>
+      <li> LOANS: Edit  </li>
+      <li> BANKS: graph  </li>
+      <li> BANKS: delete  </li>
+      <li> BANKS: Edit  </li>
   </ol> 
 </div>
 `

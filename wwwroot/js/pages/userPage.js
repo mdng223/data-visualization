@@ -6,11 +6,11 @@ export default{
     name: 'user-table',
     data: function() {
         return {
-            search: '',
-            roles: [],
-            users: [],
             editedIndex: -1,
             dialog: false,
+            search: '',
+            roles: [],
+            users: [],            
             tempEmail: '',
             tempUsername: '',
             headers: [

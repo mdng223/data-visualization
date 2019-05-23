@@ -16,6 +16,7 @@ export default{
             gender: '',
             type: '',
           },
+          genders: ['male', 'female'],
           headers: [
               {
                 text:     'First Name',
@@ -34,6 +35,15 @@ export default{
               { text: 'Action', sortable: false }
             ],
           mbtis: [],
+          rules: {
+            required:       value =>
+                            !!value
+                            || Constants.common.required,
+          },
+          types: ['ENTJ', 'INTJ', 'ENTP', 'INTP',
+                  'ENFP', 'INFP', 'ENFJ', 'INFJ',
+                  'ESTJ', 'ISTJ', 'ESFJ', 'ISFJ',
+                  'ESTP', 'ISTP', 'ESFP', 'ISFP'],
         }
     },
     methods: {
@@ -101,13 +111,13 @@ export default{
               <v-layout wrap>
 <!-- EDIT USER -->
                 <template v-if='editedIndex > -1'>
+
                   <v-flex xs12 sm6 md12>
                     <v-text-field 
                     v-model="edited.firstName"
                     label="First Name"
                     outline
-                    clearable
-                    
+                    clearable                    
                     ></v-text-field>
                   </v-flex>
 
@@ -122,18 +132,18 @@ export default{
                   </v-flex>
 
                   <v-flex xs12 sm6 md12>
-                    <v-text-field 
-                      clearable
-                      v-model="edited.gender"
+                    <v-overflow-btn
+                      :items="genders"
                       label="Gender"
                       outline
-                      clearable
-                      ></v-text-field>
+                      :placeholder="edited.gender"
+                      v-model="edited.gender"
+                    ></v-overflow-btn>
                   </v-flex>
 
                   <v-flex xs12 sm6 md12>
                     <v-overflow-btn
-                      :items="type"
+                      :items="types"
                       label="Type"
                       outline
                       :placeholder="edited.type"
@@ -143,6 +153,46 @@ export default{
                 </template>
 
 <!-- ADD USER -->
+                <template v-else>
+                <v-flex xs12 sm6 md12>
+                  <v-text-field 
+                    v-model="edited.firstName"
+                    label="First Name"
+                    outline
+                    clearable                    
+                  ></v-text-field>
+                </v-flex>
+
+                <v-flex xs12 sm6 md12>
+                  <v-text-field 
+                  v-model="edited.lastName"
+                  label="Last Name"
+                  outline
+                  clearable
+                  
+                  ></v-text-field>
+                </v-flex>
+
+                <v-flex xs12 sm6 md12>
+                  <v-overflow-btn
+                    :items="genders"
+                    label="Gender"
+                    outline
+                    :placeholder="edited.gender"
+                    v-model="edited.gender"
+                  ></v-overflow-btn>
+                </v-flex>
+
+                <v-flex xs12 sm6 md12>
+                  <v-overflow-btn
+                    :items="types"
+                    label="Type"
+                    outline
+                    :placeholder="edited.type"
+                    v-model="edited.type"
+                  ></v-overflow-btn>
+                </v-flex>
+                </template>
                                    
                   </v-layout>
                 </v-container>

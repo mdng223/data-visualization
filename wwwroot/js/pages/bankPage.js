@@ -1,8 +1,3 @@
-import AddbankForm from '../forms/addBankForm.js'
-import EditbankForm from '../forms/editBankForm.js'
-
-Vue.component('addBankForm', AddbankForm);
-Vue.component('editBankForm', EditbankForm);
 
 
 export default{
@@ -10,6 +5,7 @@ export default{
     data: function() {
         return {
             banks: '',
+            dialog: false,
             title: '',
             dismissSecs: 3,
             dismissCountDown: 0,
@@ -51,53 +47,7 @@ export default{
         }
     },
     watch: {
-        computeAddState: function(val) {
-            
-            if(val == false) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.states.add = false;
-            }
-        },
-        computeEditState: function(val) {
-            if(val == false && this.states.cancel) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.showAlert(this.title + ' edited successfully!');
-            }
-        },
-        computeSubmitState: function(val) {
-            if (val == true) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.states.submit = false;
-                this.states.add = false;
-                this.states.edit = false;
-                axios.get('api/User')
-                .then((response) => {
-                  this.users = response.data;
-                })
-                .catch(error => (console.log(error)))
-                .then( this.showAlert('User added successfully!') );
-            }
-        },
-        computeCancelState: function(val) {
-            if(val == true) {
-                this.clearForms(this.formData);
-                this.clearErrors(this.errors);
-                this.clearSuccess(this.success);
-                this.states.table = true;
-                this.states.add = false;
-                this.states.edit = false;
-                this.states.cancel = false;
-            }
-        }
+
     },
     methods: {
         edit: function (bank) {
