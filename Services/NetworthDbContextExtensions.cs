@@ -301,16 +301,12 @@ namespace Networth.Services{
                          Console.WriteLine("last name =\t{0}", split[1]);
                          Console.WriteLine("gender =\t{0}, exists=\t{1}", split[2], Enum.IsDefined(typeof(GenderEnum), split[2]));
                          Console.WriteLine("type  =\t{0}, exists=\t{1} ", split[3], Enum.IsDefined(typeof(TypeEnum), split[3]));
-                         Console.WriteLine("temperment =\t{0}, exists=\t{1}", split[4], Enum.IsDefined(typeof(TempermantEnum), split[4]));
-                         if(Enum.IsDefined(typeof(TypeEnum), split[3])
-                            && Enum.IsDefined(typeof(TypeEnum), split[3])
-                            && Enum.IsDefined(typeof(TempermantEnum), split[4])) {
+                         if(Enum.IsDefined(typeof(TypeEnum), split[3])) {
                               mbti.Add(new MBTI() {
                                    FirstName = split[0],
                                    LastName = split[1],
                                    Gender = split[2],
                                    Type = split[3],
-                                   Temperment = split[4],
                                    Mind = split[3][0],
                                    Energy = split[3][1],
                                    Nature = split[3][2],

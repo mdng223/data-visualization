@@ -4,22 +4,8 @@ export default Object.freeze({
         editSuccess:    'Successfully edited ',
         required:       'This field is required',
     },
-    user: {
-        addFailure:     'Could not add ',
-        addSuccess:     'Successfully added ',
-        deleteUser:     'Are you sure you want to delete this user?',
-        editUser:       'Edit User',
-        email:          'Invalid e-mail',
-        lowercase:      'One lowercase letter required',
-        newUser:        'New User',
-        number:         'One number required',
-        passwordLength: 'Password must be between 8 and 50 characters long',
-        passwordMatch:  'Passwords are not the same',
-        required:       'This field is required',
-        uniqueEmail:    'Email already exists',
-        uniqueUsername: 'Username already exists',
-        uppercase:      'One uppercase letter required',
-        usernameLength: 'Username must be between 4 and 20 characters long',
+    mbti: {
+
     },
     position: {
         newPosition:    'New Position',
@@ -37,5 +23,22 @@ export default Object.freeze({
         lowercase:      /[a-z]+/,
         number:         /[0-9]+/,
         uppercase:      /[A-Z]+/,
-    }
+    },
+    user: {
+        addFailure:     'Could not add ',
+        addSuccess:     'Successfully added ',
+        deleteUser:     'Are you sure you want to delete this user?',
+        editUser:       'Edit User',
+        email:          'Invalid e-mail',
+        lowercase:      'One lowercase letter required',
+        newUser:        'New User',
+        number:         'One number required',
+        passwordLength: 'Password must be between 8 and 50 characters long',
+        passwordMatch:  'Passwords are not the same',
+        required:       'This field is required',
+        uniqueEmail:    'Email already exists',
+        uniqueUsername: 'Username already exists',
+        uppercase:      'One uppercase letter required',
+        usernameLength: 'Username must be between 4 and 20 characters long',
+    },
 })

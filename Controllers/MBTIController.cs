@@ -40,6 +40,19 @@ namespace Networth.Controllers
             return Json(mbtiList);
         }
 
+        [HttpGet("api/[controller]/getNT")]
+        public JsonResult getNT() {
+            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1,2) == "NT").ToList();
+            return Json( new {
+                total = ntList.Count(),
+                male = ntList.Where(mbti => mbti.Gender == "M").Count(),
+                female = ntList.Where(mbti => mbti.Gender == "F").Count(),
+                entj = ntList.Where(mbti => mbti.Type == "ENTJ").Count(),
+                intj = ntList.Where(mbti => mbti.Type == "INTJ").Count(),
+                intp = ntList.Where(mbti => mbti.Type == "INTP").Count(),
+                entp = ntList.Where(mbti => mbti.Type == "ENTP").Count(),
+            });
+        }
 
         [HttpPut("api/[controller]/hide")]
         public ActionResult Hide(HideModel hideModel) {

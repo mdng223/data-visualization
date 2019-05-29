@@ -17,7 +17,7 @@ namespace Networth.Entities.MBTI
         public string LastName { get; set; }
         [Required, MaxLength(4), MinLength(4)]
         public string Type { get; set; }
-        [Required, MaxLength(2), MinLength(2)]
+        [MaxLength(2), MinLength(2)]
         public string Temperment { get; set; }
         [Required]
         public char Mind { get; set; }

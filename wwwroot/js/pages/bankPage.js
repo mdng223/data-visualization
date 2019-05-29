@@ -163,7 +163,6 @@ export default{
                 </td> 
             </tr>
             </table>
-            <pagination></pagination>
 
 
         </template>
