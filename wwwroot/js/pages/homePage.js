@@ -4,13 +4,6 @@ export default {
   name: 'user-table',
     data: function() {
         return {
-          mbtis: [],
-          state: {
-            NT: true,
-            NF: true,
-            SJ: true,
-            SP: true,
-          },
           label: {
             mbti: 'MBTI statistics',
             NT: 'Analysts',
@@ -18,16 +11,29 @@ export default {
             SJ: 'Sentinels',
             SP: 'Explorers',
           },
+          mbtis: [],
+          state: {
+            NF: true,
+            NT: true,            
+            SJ: true,
+            SP: true,
+          },
+          temperament: {
+            nf: {},
+            nt: {},
+            sj: {},
+            sp: {}
+          },
           toggle_multiple: [1, 2, 3, 4],
         }
     },
     methods: {
-      ntButton() {
-        this.state.NT = !this.state.NT;
-      },
       nfButton() {
         this.state.NF = !this.state.NF;
       },
+      ntButton() {
+        this.state.NT = !this.state.NT;
+      },      
       sjButton() {
         this.state.SJ = !this.state.SJ;
       },
@@ -37,6 +43,10 @@ export default {
     },
     mounted()  {
       Requests.mbti.get(this);
+      Requests.mbti.getNF(this);
+      Requests.mbti.getNT(this);
+      Requests.mbti.getSJ(this);
+      Requests.mbti.getSP(this);
     },
     template:
 `
@@ -73,7 +83,6 @@ export default {
             <v-flex xs12 sm6 class="py-2">
               <h3 class="text-md-center">{{ label.mbti }}</h3>
               <v-btn-toggle v-model="toggle_multiple" multiple>
-
                 <v-btn 
                 flat
                 color="error"
@@ -85,7 +94,6 @@ export default {
                 <template v-if="state.NT">
                   <p>{{ }}</p>
                 </template>
-
                 <v-btn
                 flat
                 color="success"
@@ -94,7 +102,6 @@ export default {
                   <v-icon>pets</v-icon>
                   {{ label.NF }}
                 </v-btn>
-
                 <v-btn
                 flat
                 color="primary"
@@ -103,7 +110,6 @@ export default {
                   <v-icon>mood</v-icon>
                   {{ label.SJ }}
                 </v-btn>
-
                 <v-btn
                 flat
                 color="warning"
@@ -112,7 +118,6 @@ export default {
                   <v-icon>directions_run</v-icon>
                   {{ label.SP }}
                 </v-btn>
-
               </v-btn-toggle>
             </v-flex>
           </v-layout>

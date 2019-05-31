@@ -40,9 +40,23 @@ namespace Networth.Controllers
             return Json(mbtiList);
         }
 
+        [HttpGet("api/[controller]/getNF")]
+        public JsonResult getNF() {
+            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NF").ToList();
+            return Json( new {
+                total = ntList.Count(),
+                male = ntList.Where(mbti => mbti.Gender == "M").Count(),
+                female = ntList.Where(mbti => mbti.Gender == "F").Count(),
+                enfj = ntList.Where(mbti => mbti.Type == "ENFJ").Count(),
+                infj = ntList.Where(mbti => mbti.Type == "INFJ").Count(),
+                enfp = ntList.Where(mbti => mbti.Type == "ENFP").Count(),
+                infp = ntList.Where(mbti => mbti.Type == "INFP").Count(),
+            });
+        }
+
         [HttpGet("api/[controller]/getNT")]
         public JsonResult getNT() {
-            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1,2) == "NT").ToList();
+            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NT").ToList();
             return Json( new {
                 total = ntList.Count(),
                 male = ntList.Where(mbti => mbti.Gender == "M").Count(),
@@ -51,6 +65,34 @@ namespace Networth.Controllers
                 intj = ntList.Where(mbti => mbti.Type == "INTJ").Count(),
                 intp = ntList.Where(mbti => mbti.Type == "INTP").Count(),
                 entp = ntList.Where(mbti => mbti.Type == "ENTP").Count(),
+            });
+        }
+
+        [HttpGet("api/[controller]/getSJ")]
+        public JsonResult getSJ() {
+            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "SJ").ToList();
+            return Json( new {
+                total = ntList.Count(),
+                male = ntList.Where(mbti => mbti.Gender == "M").Count(),
+                female = ntList.Where(mbti => mbti.Gender == "F").Count(),
+                esfj = ntList.Where(mbti => mbti.Type == "ESFJ").Count(),
+                isfj = ntList.Where(mbti => mbti.Type == "ISFJ").Count(),
+                estj = ntList.Where(mbti => mbti.Type == "ESTJ").Count(),
+                istj = ntList.Where(mbti => mbti.Type == "ISTJ").Count(),
+            });
+        }
+
+        [HttpGet("api/[controller]/getSP")]
+        public JsonResult getSP() {
+            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "SP").ToList();
+            return Json( new {
+                total = ntList.Count(),
+                male = ntList.Where(mbti => mbti.Gender == "M").Count(),
+                female = ntList.Where(mbti => mbti.Gender == "F").Count(),
+                esfp = ntList.Where(mbti => mbti.Type == "ESFP").Count(),
+                isfp = ntList.Where(mbti => mbti.Type == "ISFP").Count(),
+                estp = ntList.Where(mbti => mbti.Type == "ESTP").Count(),
+                istp = ntList.Where(mbti => mbti.Type == "ISTP").Count(),
             });
         }
 

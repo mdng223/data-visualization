@@ -14,16 +14,60 @@ namespace Networth.Controllers
     public class PositionController : Controller
     {
         private NetworthDbContext _context;
+
         public PositionController(NetworthDbContext context) {
             _context = context;
         }
-        [Route("[controller]")]
-        public ActionResult Index() {
-            return View();
+
+        [HttpGet("api/[controller]/{id}")]
+        public IActionResult GetPositionId(int id) {
+            return Ok(_context.Positions.Find(id));
+        }
+
+        [HttpPut("api/[controller]/edit")]
+        public JsonResult EditUser(EditPositionModel position) {
+            Console.WriteLine("Editing ID:\t{0} ::\ttype: {1}", position.Id, position.Id.GetType());
+            Console.WriteLine("Editing positionName:\t{0} ::\ttype: {1}", position.positionName, position.positionName.GetType());
+            Console.WriteLine("Editing symbol:\t{0} ::\ttype: {1}", position.symbol, position.symbol.GetType());
+            Console.WriteLine("Editing userId:\t{0} ::\ttype: {1}", position.userId, position.userId.GetType());
+            try {
+                Position p =_context.Positions.FirstOrDefault(a => a.PositionId == position.Id);
+                if(p == null) {
+                    return Json(new {
+                        message = "Null"
+                    });
+                }
+                p.PositionName = position.positionName;
+                p.Symbol = position.symbol;
+                p.UserId = position.userId;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("User delete failed. " + e);
+            }
+            //return Json(user.Username + " hidden!");
+            return Json(position.Id);
+        }
+
+        [HttpPut("api/[controller]/hide")]
+        public JsonResult HidePosition(HideModel hideModel) {
+            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
+            try {
+                Position p =_context.Positions.SingleOrDefault(a => a.PositionId == hideModel.Id);
+                if(p == null) {
+                    return Json(new {
+                        message = "Null"
+                    });
+                }
+                p.Hidden = true;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("User delete failed. " + e);
+            }
+            return Json(hideModel.Id);
         }
 
         [HttpGet("api/[controller]")]
-        public ActionResult GetPositions() {
+        public JsonResult GetPositions() {
             List<PositionViewModel> positionList = new List<PositionViewModel> {};
             foreach (Position position in _context.Positions) {
                 if (position.Hidden == false) {
@@ -31,18 +75,21 @@ namespace Networth.Controllers
                     positionData.PositionId = position.PositionId;
                     positionData.PositionName = position.PositionName;
                     positionData.Symbol = position.Symbol;
-                    positionData.Username = _context.Users.FirstOrDefault(a => a.Id == 
-                                            position.UserId).Username;
+                    positionData.Username = _context.Users.FirstOrDefault(
+                        a => a.Id == position.UserId).Username;
                     positionList.Add(positionData);
                 }
             }
             return Json(positionList);
         }
 
+        [Route("[controller]")]
+        public ActionResult Index() {
+            return View();
+        }
 
         [HttpPost("api/[controller]")]
-        public ActionResult PostPosition(Position Position) {
-            Console.WriteLine("GETS HERE");
+        public JsonResult PostPosition(Position Position) {
             Console.WriteLine("Position Name:\t{0} ::\ttype: {1}", Position.PositionName, Position.PositionName.GetType());
             Console.WriteLine("Symbol:\t{0} ::\ttype: {1}", Position.Symbol, Position.Symbol.GetType());
             Console.WriteLine("Symbol:\t{0} ::\ttype: {1}", Position.UserId, Position.UserId.GetType());
@@ -59,52 +106,7 @@ namespace Networth.Controllers
             } catch (Exception e) {
                 return Json("Position add failed. " + e);
             }
-
             return Json("Position added successfully!");
-        }
-
-        [HttpPut("api/[controller]/edit")]
-        public ActionResult EditUser(EditPositionModel position) {
-            Console.WriteLine("Editing ID:\t{0} ::\ttype: {1}", position.Id, position.Id.GetType());
-            Console.WriteLine("Editing positionName:\t{0} ::\ttype: {1}", position.positionName, position.positionName.GetType());
-            Console.WriteLine("Editing symbol:\t{0} ::\ttype: {1}", position.symbol, position.symbol.GetType());
-            Console.WriteLine("Editing userId:\t{0} ::\ttype: {1}", position.userId, position.userId.GetType());
-            try {
-                Position p =_context.Positions.FirstOrDefault(a => a.PositionId == position.Id);
-                if(p == null) {
-                    return BadRequest();
-                }
-                p.PositionName = position.positionName;
-                p.Symbol = position.symbol;
-                p.UserId = position.userId;
-                _context.SaveChanges();
-            } catch (Exception e) {
-                return Json("User delete failed. " + e);
-            }
-            //return Json(user.Username + " hidden!");
-            return Json(position.Id);
-        }
-
-        [HttpPut("api/[controller]/hide")]
-        public ActionResult HidePosition(HideModel hideModel) {
-            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
-            try {
-                Position p =_context.Positions.SingleOrDefault(a => a.PositionId == hideModel.Id);
-                if(p == null) {
-                    return BadRequest();
-                }
-                p.Hidden = true;
-                _context.SaveChanges();
-            } catch (Exception e) {
-                return Json("User delete failed. " + e);
-            }
-            return Json(hideModel.Id);
-        }
-
-
-        [HttpGet("api/[controller]/{id}")]
-        public IActionResult GetPositionId(int id) {
-            return Ok(_context.Positions.Find(id));
         }
     }
 }

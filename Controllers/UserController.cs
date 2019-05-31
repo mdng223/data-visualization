@@ -12,21 +12,36 @@ using Networth.Models;
 
 namespace Networth.Controllers
 {
-
     [ApiController]
     public class UserController : Controller
     {
         private NetworthDbContext _context;
+
         public UserController(NetworthDbContext context) {
             _context = context;
         }
-        [Route("[controller]")]
-        public ActionResult Index() {
-            return View();
+
+        [HttpPut("api/[controller]/edit")]
+        public JsonResult EditUser(EditUserModel user) {
+            Console.WriteLine("Editing ID:\t{0} ::\ttype: {1}", user.Id, user.Id.GetType());
+            try {
+                User u =_context.Users.FirstOrDefault(a => a.Id == user.Id);
+                if(u == null) {
+                    return Json(new {
+                        message = "Null"
+                    });
+                }
+                u.Email = user.Email;
+                u.RoleId = user.RoleId;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("User delete failed. " + e);
+            }
+            return Json(user.Id);
         }
 
         [HttpGet("api/[controller]")]
-        public ActionResult GetUsers() {
+        public JsonResult GetUsers() {
             List<UserViewModel> userList = new List<UserViewModel> {};
             foreach (User user in _context.Users) {
                 if (user.Hidden == false) {
@@ -46,8 +61,31 @@ namespace Networth.Controllers
             return Ok(_context.Users.Find(id));
         }
 
+        [HttpPut("api/[controller]/hide")]
+        public JsonResult HideUser(HideModel hideModel) {
+            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
+            try {
+                User u =_context.Users.FirstOrDefault(a => a.Id == hideModel.Id);
+                if(u == null) {
+                    return Json(new {
+                        message = "Null"
+                    });
+                }
+                u.Hidden = true;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("User delete failed. " + e);
+            }
+            return Json(hideModel.Id);
+        }
+
+        [Route("[controller]")]
+        public ActionResult Index() {
+            return View();
+        }
+
         [HttpPost("api/[controller]")]
-        public ActionResult PostUser(User user) {
+        public JsonResult PostUser(User user) {
             Console.WriteLine("Username:\t{0} ::\ttype: {1}", user.Username, user.Username.GetType());
             Console.WriteLine("Password:\t{0} ::\ttype: {1}", user.Password, user.Password.GetType());
             Console.WriteLine("Email:\t{0} ::\ttype: {1}", user.Email, user.Email.GetType());
@@ -64,45 +102,7 @@ namespace Networth.Controllers
             } catch (Exception e) {
                 return Json("User add failed. " + e);
             }
-
             return Json("User added successfully!");
-        }
-
-
-        [HttpPut("api/[controller]/hide")]
-        public ActionResult HideUser(HideModel hideModel) {
-            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
-            try {
-                User u =_context.Users.FirstOrDefault(a => a.Id == hideModel.Id);
-                if(u == null) {
-                    return BadRequest();
-                }
-                u.Hidden = true;
-                _context.SaveChanges();
-            } catch (Exception e) {
-                return Json("User delete failed. " + e);
-            }
-            //return Json(user.Username + " hidden!");
-            return Json(hideModel.Id);
-        }
-
-
-        [HttpPut("api/[controller]/edit")]
-        public ActionResult EditUser(EditUserModel user) {
-            Console.WriteLine("Editing ID:\t{0} ::\ttype: {1}", user.Id, user.Id.GetType());
-            try {
-                User u =_context.Users.FirstOrDefault(a => a.Id == user.Id);
-                if(u == null) {
-                    return BadRequest();
-                }
-                u.Email = user.Email;
-                u.RoleId = user.RoleId;
-                _context.SaveChanges();
-            } catch (Exception e) {
-                return Json("User delete failed. " + e);
-            }
-            //return Json(user.Username + " hidden!");
-            return Json(user.Id);
         }
     }
 }

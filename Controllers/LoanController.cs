@@ -14,17 +14,35 @@ namespace Networth.Controllers
     public class LoanController : Controller
     {
         private NetworthDbContext _context;
+
         public LoanController(NetworthDbContext context) {
             _context = context;
         }
 
-        [Route("[controller]")]
-        public ActionResult Index() {
-            return View();
+        [HttpPut("api/[controller]/hide")]
+        public JsonResult HideLoan(HideModel hideModel) {
+            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
+            try {
+                Loan l =_context.Loans.FirstOrDefault(a => a.LoanId == hideModel.Id);
+                if(l == null) {
+                    return Json(new {
+                        message = "Null"
+                    });
+                }
+                l.Hidden = true;
+                _context.SaveChanges();
+            } catch (Exception e) {
+                return Json("Bank delete failed. " + e);
+            }
+            return Json(hideModel.Id);
+        }
+        [HttpGet("api/[controller]/{id}")]
+        public IActionResult GetLoanId(int id) {
+            return Ok(_context.Loans.Find(id));
         }
 
         [HttpGet("api/[controller]")]
-        public ActionResult GetLoans() {
+        public JsonResult GetLoans() {
             List<LoanViewModel> loanList = new List<LoanViewModel> {};
             foreach (Loan loan in _context.Loans) {
                 if (loan.Hidden == false) {
@@ -44,24 +62,9 @@ namespace Networth.Controllers
             return Json(loanList);
         }
 
-        [HttpPut("api/[controller]/hide")]
-        public ActionResult HideLoan(HideModel hideModel) {
-            Console.WriteLine("Hiding ID:\t{0} ::\ttype: {1}", hideModel.Id, hideModel.Id.GetType());
-            try {
-                Loan l =_context.Loans.FirstOrDefault(a => a.LoanId == hideModel.Id);
-                if(l == null) {
-                    return BadRequest();
-                }
-                l.Hidden = true;
-                _context.SaveChanges();
-            } catch (Exception e) {
-                return Json("Bank delete failed. " + e);
-            }
-            return Json(hideModel.Id);
-        }
-        [HttpGet("api/[controller]/{id}")]
-        public IActionResult GetLoanId(int id) {
-            return Ok(_context.Loans.Find(id));
+        [Route("[controller]")]
+        public ActionResult Index() {
+            return View();
         }
     }
 }

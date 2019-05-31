@@ -8,19 +8,19 @@ using Networth.Services;
 using Networth.Entities.Role;
 using Networth.Models;
 
-
 namespace Networth.Controllers
 {
-
     [ApiController]
     public class RoleController : Controller
     {
         private NetworthDbContext _context;
+
         public RoleController(NetworthDbContext context) {
             _context = context;
         }
+
         [HttpGet("api/[controller]")]
-        public ActionResult GetRoles() {
+        public JsonResult GetRoles() {
             List<RoleModel> roleList = new List<RoleModel> {};
             foreach (Role role in _context.Roles) {
                 RoleModel roleData = new RoleModel();
