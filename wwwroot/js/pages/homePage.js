@@ -19,26 +19,39 @@ export default {
             SP: true,
           },
           temperament: {
-            nf: {},
-            nt: {},
-            sj: {},
-            sp: {}
+            NF: {},
+            NT: {},
+            SJ: {},
+            SP: {}
           },
           toggle_multiple: [1, 2, 3, 4],
+          total: 0,
         }
     },
     methods: {
+      /*
+       *  Purpose: This will aggregate the total based on which
+       *           temperament is active. 
+       */
       nfButton() {
+        let nfTotal = this.temperament.NF.total;
         this.state.NF = !this.state.NF;
+        this.total += this.state.NF ? nfTotal : -1 * nfTotal;
       },
       ntButton() {
+        let ntTotal = this.temperament.NT.total;
         this.state.NT = !this.state.NT;
+        this.total += this.state.NF ? ntTotal : -1 * ntTotal;
       },      
       sjButton() {
+        let sjTotal = this.temperament.SJ.total;
         this.state.SJ = !this.state.SJ;
+        this.total += this.state.SJ ? sjTotal : -1 * sjTotal;
       },
       spButton() {
+        let spTotal = this.temperament.SP.total;
         this.state.SP = !this.state.SP;
+        this.total += this.state.SP ? spTotal : -1 * spTotal;
       },
     },
     mounted()  {
@@ -82,6 +95,7 @@ export default {
           <v-layout row wrap>
             <v-flex xs12 sm6 class="py-2">
               <h3 class="text-md-center">{{ label.mbti }}</h3>
+
               <v-btn-toggle v-model="toggle_multiple" multiple>
                 <v-btn 
                 flat
@@ -91,9 +105,7 @@ export default {
                   <v-icon>local_cafe</v-icon>
                   {{ label.NT }}
                 </v-btn>
-                <template v-if="state.NT">
-                  <p>{{ }}</p>
-                </template>
+                
                 <v-btn
                 flat
                 color="success"
@@ -102,6 +114,7 @@ export default {
                   <v-icon>pets</v-icon>
                   {{ label.NF }}
                 </v-btn>
+
                 <v-btn
                 flat
                 color="primary"
@@ -110,6 +123,7 @@ export default {
                   <v-icon>mood</v-icon>
                   {{ label.SJ }}
                 </v-btn>
+
                 <v-btn
                 flat
                 color="warning"
@@ -118,7 +132,21 @@ export default {
                   <v-icon>directions_run</v-icon>
                   {{ label.SP }}
                 </v-btn>
+
               </v-btn-toggle>
+              <template v-if="state.NT">
+                  <p>{{ temperament.NT.total }}</p>
+              </template>
+              <template v-if="state.NF">
+                  <p>{{ temperament.NF.total }}</p>
+              </template>
+              <template v-if="state.SJ">
+                  <p>{{ temperament.SJ.total }}</p>
+              </template>
+              <template v-if="state.SP">
+                  <p>{{ temperament.SP.total }}</p>
+              </template>
+              <p>{{ total }}</p>
             </v-flex>
           </v-layout>
         </v-container>

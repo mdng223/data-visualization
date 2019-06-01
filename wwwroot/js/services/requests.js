@@ -33,28 +33,33 @@ export default {
     getNF (that) {
       axios.get('api/MBTI/getNF')
       .then((response) => {
-        that.temperament.nf = response.data;
+        that.temperament.NF = response.data;
+        that.total += parseInt(response.data.total);
       })
       .catch(error => (console.log(error)));
     },
     getNT (that) {
       axios.get('api/MBTI/getNT')
       .then((response) => {
-        that.termperament.nt = response.data;
+        that.temperament.NT = response.data;
+        that.total += parseInt(response.data.total);
       })
       .catch(error => (console.log(error)));
     },
     getSJ (that) {
       axios.get('api/MBTI/getSJ')
       .then((response) => {
-        that.temperament.sj = response.data;
+        that.temperament.SJ = response.data;
+        that.total += parseInt(response.data.total);
+        console.log(that.total);
       })
       .catch(error => (console.log(error)));
     },
     getSP (that) {
       axios.get('api/MBTI/getSP')
       .then((response) => {
-        that.temperament.sp = response.data;
+        that.temperament.SP = response.data;
+        that.total += parseInt(response.data.total);
       })
       .catch(error => (console.log(error)));
     },

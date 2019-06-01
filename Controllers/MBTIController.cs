@@ -42,21 +42,22 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]/getNF")]
         public JsonResult getNF() {
-            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NF").ToList();
+            var nfList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NF").ToList();
             return Json( new {
-                total = ntList.Count(),
-                male = ntList.Where(mbti => mbti.Gender == "M").Count(),
-                female = ntList.Where(mbti => mbti.Gender == "F").Count(),
-                enfj = ntList.Where(mbti => mbti.Type == "ENFJ").Count(),
-                infj = ntList.Where(mbti => mbti.Type == "INFJ").Count(),
-                enfp = ntList.Where(mbti => mbti.Type == "ENFP").Count(),
-                infp = ntList.Where(mbti => mbti.Type == "INFP").Count(),
+                total = nfList.Count(),
+                male = nfList.Where(mbti => mbti.Gender == "M").Count(),
+                female = nfList.Where(mbti => mbti.Gender == "F").Count(),
+                enfj = nfList.Where(mbti => mbti.Type == "ENFJ").Count(),
+                infj = nfList.Where(mbti => mbti.Type == "INFJ").Count(),
+                enfp = nfList.Where(mbti => mbti.Type == "ENFP").Count(),
+                infp = nfList.Where(mbti => mbti.Type == "INFP").Count(),
             });
         }
 
         [HttpGet("api/[controller]/getNT")]
         public JsonResult getNT() {
             var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NT").ToList();
+
             return Json( new {
                 total = ntList.Count(),
                 male = ntList.Where(mbti => mbti.Gender == "M").Count(),
@@ -70,29 +71,35 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]/getSJ")]
         public JsonResult getSJ() {
-            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "SJ").ToList();
+            var sjList = _context.MBTI.Where(mbti => mbti.Type[1] == 'S'
+                        && mbti.Type[3] == 'J').ToList();
+            Console.WriteLine(sjList.Count());
+            Console.WriteLine(sjList.Where(mbti => mbti.Type == "ESFJ").Count());
             return Json( new {
-                total = ntList.Count(),
-                male = ntList.Where(mbti => mbti.Gender == "M").Count(),
-                female = ntList.Where(mbti => mbti.Gender == "F").Count(),
-                esfj = ntList.Where(mbti => mbti.Type == "ESFJ").Count(),
-                isfj = ntList.Where(mbti => mbti.Type == "ISFJ").Count(),
-                estj = ntList.Where(mbti => mbti.Type == "ESTJ").Count(),
-                istj = ntList.Where(mbti => mbti.Type == "ISTJ").Count(),
+                total = sjList.Count(),
+                male = sjList.Where(mbti => mbti.Gender == "M").Count(),
+                female = sjList.Where(mbti => mbti.Gender == "F").Count(),
+                esfj = sjList.Where(mbti => mbti.Type == "ESFJ").Count(),
+                isfj = sjList.Where(mbti => mbti.Type == "ISFJ").Count(),
+                estj = sjList.Where(mbti => mbti.Type == "ESTJ").Count(),
+                istj = sjList.Where(mbti => mbti.Type == "ISTJ").Count(),
             });
         }
 
         [HttpGet("api/[controller]/getSP")]
         public JsonResult getSP() {
-            var ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "SP").ToList();
-            return Json( new {
-                total = ntList.Count(),
-                male = ntList.Where(mbti => mbti.Gender == "M").Count(),
-                female = ntList.Where(mbti => mbti.Gender == "F").Count(),
-                esfp = ntList.Where(mbti => mbti.Type == "ESFP").Count(),
-                isfp = ntList.Where(mbti => mbti.Type == "ISFP").Count(),
-                estp = ntList.Where(mbti => mbti.Type == "ESTP").Count(),
-                istp = ntList.Where(mbti => mbti.Type == "ISTP").Count(),
+            var spList = _context.MBTI.Where(mbti => mbti.Type[1] == 'S'
+                        && mbti.Type[3] == 'P').ToList();
+            Console.WriteLine(spList.Count());
+            Console.WriteLine(spList.Where(mbti => mbti.Type == "ESFP").Count());
+            return Json(new {
+                total = spList.Count(),
+                male = spList.Where(mbti => mbti.Gender == "M").Count(),
+                female = spList.Where(mbti => mbti.Gender == "F").Count(),
+                esfp = spList.Where(mbti => mbti.Type == "ESFP").Count(),
+                isfp = spList.Where(mbti => mbti.Type == "ISFP").Count(),
+                estp = spList.Where(mbti => mbti.Type == "ESTP").Count(),
+                istp = spList.Where(mbti => mbti.Type == "ISTP").Count(),
             });
         }
 
