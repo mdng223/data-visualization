@@ -1,41 +1,30 @@
-import Home from './pages/homePage.js'
-import UserPage from './pages/userPage.js'
-import NotFound from './pages/notFound.js'
-import PositionPage from './pages/positionPage.js'
 import BankPage from './pages/bankPage.js'
+import Home from './pages/homePage.js'
 import LoanPage from './pages/loanPage.js'
+import PositionPage from './pages/positionPage.js'
 import MBTIPage from './pages/MBTIPage.js'
+import MBTIStats from './pages/MBTIStats.js'
+import NotFound from './pages/notFound.js'
+import UserPage from './pages/userPage.js'
 
-
-// 2. Define some routes
-// Each route should map to a component. The "component" can
-// either be an actual component constructor created via
-// `Vue.extend()`, or just a component options object.
-// We'll talk about nested routes later.
 const routes = [
+  { path: '*', name: '404', component: NotFound},
   { path: '/', name: 'Home', component: Home },
-  { path: '/Positions', name: 'Positions', component: PositionPage },
-  { path: '/loans', name: 'Loans', component: LoanPage },
   { path: '/banks', name: 'Banks', component: BankPage },
+  { path: '/loans', name: 'Loans', component: LoanPage },
+  { path: '/mbti', name: 'MBTI', component: MBTIPage },
+  { path: '/mbtistats', name: 'MBTIStats', component: MBTIStats},
+  { path: '/positions', name: 'Positions', component: PositionPage },
   { path: '/users',
     name: 'Users', 
     components: { default: UserPage },
     props: {default: true}
   },
-  { path: '/mbti', name: 'MBTI', component: MBTIPage },
-  { path: '*', name: '404', component: NotFound}
 ]
 
-// 3. Create the router instance and pass the `routes` option
-// You can pass in additional options here, but let's
-// keep it simple for now.
 const router = new VueRouter({
-  routes // short for `routes: routes`
+  routes
 })
-
-// 4. Create and mount the root instance.
-// Make sure to inject the router with the router option to make the
-// whole app router-aware.
 
 var store = {
   state: {
@@ -50,16 +39,15 @@ var store = {
   }
 }
 
-
 const app = new Vue({
   router,
   el: '#app',
   components: {
-  	vuejsDatepicker
+    vuejsDatepicker
   },
   data: {
-    users: '',
     loading: store.state.loading,
+    users: '',
     userState: store.state.user,
   },
   watch: {
@@ -88,19 +76,7 @@ const app = new Vue({
      this.loading = false;
     },
     fetchUsers() {
-      this.logger('info', 'fetchUsers()');
       this.userState = true;
-      //userRequests.fetchUsers(this);
     },
-    logger(logLevel, message) {
-      var today = new Date();
-      var date = (today.getMonth()+1)+'-'+today.getDate()+'-'+today.getFullYear();
-      var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-      var dateTime = date+' '+time;
-      console.log( dateTime + ' :: ' + logLevel + ' :: ' + message );
-    }
   }
 }).$mount('#app')
-
-// Now the app has started!
-

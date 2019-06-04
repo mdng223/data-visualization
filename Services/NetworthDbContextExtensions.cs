@@ -292,16 +292,42 @@ namespace Networth.Services{
                     string[] lines = File.ReadAllLines("services/mbti.csv");
                     foreach(string line in lines){
                          string[] split = line.Split(",");
-                         // int column = 0;
-                         // foreach(string i in split) {
-                         //      Console.WriteLine("{0}: {1}", i[0], Enum.IsDefined(typeof(TypeEnum), i[0]));
-                         //      column++;
-                         // }
                          Console.WriteLine("first name =\t{0}", split[0]);
                          Console.WriteLine("last name =\t{0}", split[1]);
                          Console.WriteLine("gender =\t{0}, exists=\t{1}", split[2], Enum.IsDefined(typeof(GenderEnum), split[2]));
                          Console.WriteLine("type  =\t{0}, exists=\t{1} ", split[3], Enum.IsDefined(typeof(TypeEnum), split[3]));
                          if(Enum.IsDefined(typeof(TypeEnum), split[3])) {
+                              string temperamentName = "Unknown";
+                              TemperamentEnum temperament;
+
+                              /*
+                                   This will try to get a temperament enum: NT, NF, SP, SJ
+                               */
+                              if (!Enum.TryParse(String.Concat(split[3][1], split[3][2]), out temperament)) {
+                                   Enum.TryParse(String.Concat(split[3][1], split[3][3]), out temperament);
+                              }
+                              if (Enum.IsDefined(typeof(TemperamentEnum), temperament)) {
+                                   switch(temperament) {
+                                        case TemperamentEnum.NF:
+                                             temperamentName = "Diplomat";
+                                             break;
+                                        case TemperamentEnum.NT:
+                                             temperamentName = "Analyst";
+                                             break;
+                                        case TemperamentEnum.SJ:
+                                             temperamentName = "Sentinel";
+                                             break;
+                                        case TemperamentEnum.SP:
+                                             temperamentName = "Explorer";
+                                             break;
+                                        default:
+                                             temperamentName = "Unknown";
+                                             break;
+                                   }
+                              } else {
+                                   Console.WriteLine("ERROR: Unknown Temperament.");
+                              }                              
+
                               mbti.Add(new MBTI() {
                                    FirstName = split[0],
                                    LastName = split[1],
@@ -312,6 +338,7 @@ namespace Networth.Services{
                                    Nature = split[3][2],
                                    Tactic = split[3][3],
                                    Hidden = false,
+                                   Temperament = temperamentName,
                               });
                          }
                     }

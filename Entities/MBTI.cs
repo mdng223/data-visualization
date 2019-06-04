@@ -17,8 +17,7 @@ namespace Networth.Entities.MBTI
         public string LastName { get; set; }
         [Required, MaxLength(4), MinLength(4)]
         public string Type { get; set; }
-        [MaxLength(2), MinLength(2)]
-        public string Temperment { get; set; }
+        public string Temperament { get; set; }
         [Required]
         public char Mind { get; set; }
         [Required]
@@ -30,7 +29,7 @@ namespace Networth.Entities.MBTI
         [Required]
         public string Gender { get; set;}
         [Required]
-        public bool Hidden {get; set; }
+        public bool Hidden { get; set; }
      }
     public enum GenderEnum
     {  
@@ -59,7 +58,7 @@ namespace Networth.Entities.MBTI
     {
         Judger, Perceriver
     }
-    public enum TempermantEnum
+    public enum TemperamentEnum
     {
         NT, SJ, NF, SP
     }

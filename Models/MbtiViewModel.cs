@@ -15,5 +15,6 @@ namespace Networth.Models
         public char Nature { get; set; }
         public char Tactic { get; set; }
         public string Gender { get; set;}
+        public string Temperament { get; set; }
     }
 }

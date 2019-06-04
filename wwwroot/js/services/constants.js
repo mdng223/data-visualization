@@ -5,7 +5,10 @@ export default Object.freeze({
         required:       'This field is required',
     },
     mbti: {
-
+        
+    },
+    mbtiStats: {
+        title: 'MBTI Stats'
     },
     position: {
         newPosition:    'New Position',

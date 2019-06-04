@@ -28,7 +28,7 @@ namespace Networth.Controllers
                     mm.FirstName = mbti.FirstName;
                     mm.LastName = mbti.LastName;
                     mm.Type = mbti.Type;
-                    mm.Temperment = mbti.Temperment;
+                    mm.Temperament = mbti.Temperament;
                     mm.Mind = mbti.Mind;
                     mm.Energy = mbti.Energy;
                     mm.Nature = mbti.Nature;
@@ -42,16 +42,39 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]/getNF")]
         public JsonResult getNF() {
-            var nfList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NF").ToList();
-            return Json( new {
-                total = nfList.Count(),
-                male = nfList.Where(mbti => mbti.Gender == "M").Count(),
-                female = nfList.Where(mbti => mbti.Gender == "F").Count(),
-                enfj = nfList.Where(mbti => mbti.Type == "ENFJ").Count(),
-                infj = nfList.Where(mbti => mbti.Type == "INFJ").Count(),
-                enfp = nfList.Where(mbti => mbti.Type == "ENFP").Count(),
-                infp = nfList.Where(mbti => mbti.Type == "INFP").Count(),
-            });
+            int total = _context.MBTI.Count();
+            List<MBTI> nfList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NF").ToList();
+            Temperament temperament = new Temperament();
+
+            temperament.name = "Diplomat";
+            temperament.maleCount = nfList.Where(mbti => mbti.Gender == "M").Count();
+            temperament.femaleCount = nfList.Where(mbti => mbti.Gender == "F").Count();
+            temperament.total = nfList.Count();
+            temperament.totalPercentage = (double)temperament.total / (double)total * 100;
+            temperament.mbtiTypes = new List<MbtiType>() {
+                new MbtiType(){
+                    name = "Advocate",
+                    total = nfList.Where(mbti => mbti.Type == "INFJ").Count(),
+                    totalPercentage = (double)total / (double)temperament.total * 100,
+                },
+                new MbtiType(){
+                    name = "Campaigner",
+                    total = nfList.Where(mbti => mbti.Type == "ENFP").Count(),
+                    totalPercentage = (double)total / (double)temperament.total * 100,
+                },
+                new MbtiType(){
+                    name = "Mediator",
+                    total = nfList.Where(mbti => mbti.Type == "INFP").Count(),
+                    totalPercentage = (double)total / (double)temperament.total * 100,
+                },
+                new MbtiType(){
+                    name = "Protagonist",
+                    total = nfList.Where(mbti => mbti.Type == "ENFJ").Count(),
+                    totalPercentage = (double)total / (double)temperament.total * 100,
+                },
+            };
+
+            return Json(temperament);
         }
 
         [HttpGet("api/[controller]/getNT")]

@@ -236,6 +236,7 @@ export default{
             Close
           </v-btn>
         </v-snackbar>
+        
         <v-divider class="mx-2" inset vertical></v-divider>
         <v-toolbar flat color="white">
           <v-toolbar-title>Users</v-toolbar-title>
