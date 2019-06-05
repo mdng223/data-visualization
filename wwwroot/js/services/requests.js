@@ -26,7 +26,7 @@ export default {
     get (that) {
       axios.get('api/MBTI')
       .then((response) => {
-        that.mbtis = response.data;
+        that.mbtis = response.data.mbtiList;
       })
       .catch(error => (console.log(error)));
     },
