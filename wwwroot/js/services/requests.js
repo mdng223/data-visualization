@@ -26,7 +26,33 @@ export default {
     get (that) {
       axios.get('api/MBTI')
       .then((response) => {
-        that.mbtis = response.data.mbtiList;
+        if (response.data.status == false) {
+          console.log(response.data.message);
+        } else {
+          that.mbtis = response.data.mbtiList;
+        }        
+      })
+      .catch(error => (console.log(error)));
+    },
+    getGenders (that) {
+      axios.get('api/MBTI/getGenders')
+      .then((response) => {
+        if (response.data.status == false) {
+          console.log(response.data.message);
+        } else {
+          that.genders = response.data.genders;
+        }
+      })
+      .catch(error => (console.log(error)));
+    },
+    getMbtiTypes(that) {
+      axios.get('api/MBTI/getGenders')
+      .then((response) => {
+        if (response.data.status == false) {
+          console.log(response.data.message);
+        } else {
+          that.mbtis = response.data.mbtis.temperaments;
+        }
       })
       .catch(error => (console.log(error)));
     },
@@ -51,7 +77,6 @@ export default {
       .then((response) => {
         that.temperament.SJ = response.data;
         that.total += parseInt(response.data.total);
-        console.log(that.total);
       })
       .catch(error => (console.log(error)));
     },
@@ -63,20 +88,6 @@ export default {
       })
       .catch(error => (console.log(error)));
     },
-    // edit: function( data) {
-    //   axios({
-    //   method: 'Put',
-    //   url: 'api/MBTI/edit',
-    //   data: data,
-    //   headers:{'Content-Type': 'application/json; charset=utf-8'},
-    //   })
-    //   .then(function (response) {
-    //   console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //   console.log(error);
-    //   });
-    // },
   },
   position: {
     edit: function(data) {
