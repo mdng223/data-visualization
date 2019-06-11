@@ -1,4 +1,7 @@
 export default {
+    outputError(errorMessage) {
+        return `Error: ${errorMessage}`;
+    },
     uniqueValue (value, list, length, ignoredValue) {
         for (let i = 0; i < length; i++) {
             console.log(value, list[i], ignoredValue);

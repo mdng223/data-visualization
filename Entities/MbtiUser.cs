@@ -17,13 +17,15 @@ namespace Networth.Entities.MbtiUser
         [Required, MinLength(4), MaxLength(20)]
         public string LastName { get; set; }
 
-        [Required, MinLength(4), MaxLength(4)]
-        public string Symbol { get; set; }
+        [ForeignKey("GenderId")]
+        public int GenderId { get; set; }
+        public virtual Gender.Gender Gender { get; set; }
+
+        [ForeignKey("MbtiId")]
+        public int MbtiId { get; set; }
+        public virtual Mbti.Mbti Mbti { get; set; }
 
         [Required]
-        public string TemperamentName { get; set; }
-
-        [Required]
-        public string TemperamentSymbol { get; set; }
+        public bool Hidden { get; set; }
     }
 }   

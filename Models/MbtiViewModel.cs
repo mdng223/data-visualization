@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Networth.Entities.Mbti;
 namespace Networth.Models
 {
-    public class MbtiModel
+    public class MbtiViewModel
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -11,5 +11,6 @@ namespace Networth.Models
         public string Type { get; set; }
         public string Gender { get; set;}
         public string Temperament { get; set; }
+        public bool Hidden { get; set; }
     }
 }

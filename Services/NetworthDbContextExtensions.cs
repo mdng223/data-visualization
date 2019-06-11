@@ -337,19 +337,19 @@ namespace Networth.Services{
                     },
                     new Mbti() {
                         Name = "Architect",
-                        Type = "INTJ",
+                        Symbol = "INTJ",
                         TemperamentName = "Analyst",
                         TemperamentSymbol = "NT"
                     },
                     new Mbti() {
                         Name = "Debater",
-                        Type = "ENTP",
+                        Symbol = "ENTP",
                         TemperamentName = "Analyst",
                         TemperamentSymbol = "NT"
                     },
                     new Mbti() {
                         Name = "Analyst",
-                        Type = "INTP",
+                        Symbol = "INTP",
                         TemperamentName = "Analyst",
                         TemperamentSymbol = "NT"
                     },
@@ -425,31 +425,34 @@ namespace Networth.Services{
                         TemperamentName = "Explorer",
                         TemperamentSymbol = "SP"
                     },
-                }
+                };
                 context.AddRange(mbtis);
             }
             context.SaveChanges();
 
             // ADD MbtiUser TABLE
-               if(!context.MbtiUser.Any()){
-                    List<MbtiUser> mbtiUsers = new List<MbtiUser>();
-                    string[] lines = File.ReadAllLines("services/mbti.csv");
-                    foreach(string line in lines){
-                         string[] split = line.Split(",");
-                         Console.WriteLine("first name =\t{0}", split[0]);
-                         Console.WriteLine("last name =\t{0}", split[1]);
+            if(!context.MbtiUser.Any()){
+                List<MbtiUser> mbtiUsers = new List<MbtiUser>();
+                string[] lines = File.ReadAllLines("services/mbti.csv");
+                foreach(string line in lines){
+                        string[] split = line.Split(",");
+                        Console.WriteLine("first name =\t{0}", split[0]);
+                        Console.WriteLine("last name =\t{0}", split[1]);
+                        Console.WriteLine("last name =\t{0} {1}", split[2], split[2].GetType());
 
-
-                         mbtiUsers.Add(new MbtiUser() {
-                              FirstName = split[0],
-                              LastName = split[1],
-                              TemperamentName = context.Mbti.FirstOrDefault(mbti => mbti.Symbol == split[3]).TempermentName,
-                              GenderId = context.Gender.FirstOrDefault(g => g.Type[0] == split[2]).Id,
-                              MbtiId = context.Mbti.FirstOrDefault(mbti => mbti.Type == split[3]).Id,
-                              Hidden = false,
-                         });
-                    }
-               }
+                        try {
+                            mbtiUsers.Add(new MbtiUser() {
+                                FirstName = split[0],
+                                LastName = split[1],
+                                GenderId = context.Gender.FirstOrDefault(g => g.Type[0] == split[2][0]).Id,
+                                MbtiId = context.Mbti.FirstOrDefault(mbti => mbti.Symbol == split[3]).Id,
+                                Hidden = false,
+                            });
+                        } catch (Exception e) {
+                            Console.WriteLine(e);
+                        }
+                        
+                }
                 context.AddRange(mbtiUsers);
             }
             context.SaveChanges();

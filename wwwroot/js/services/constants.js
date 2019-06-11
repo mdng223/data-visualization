@@ -1,14 +1,22 @@
 export default Object.freeze({
+    color: {
+        red:            'red',
+        success:        'success'
+    },
     common: {
+        addSuccess:     'Successfully added',
+        contentTypeValue: 'application/json; charset=utf-8',
+        deleteSuccess:  'Successfully deleted',
         editFailure:    'Could not edit ',
         editSuccess:    'Successfully edited ',
         required:       'This field is required',
+        success:        'success',
     },
     mbti: {
-        
+        title:          'MBTI Statistics',
     },
     mbtiStats: {
-        title: 'MBTI Stats'
+        title:          'MBTI Stats'
     },
     position: {
         newPosition:    'New Position',
@@ -21,11 +29,26 @@ export default Object.freeze({
         manager:        'Manager',
         user:           'User',
     },
+    method: {
+        post:           'POST',
+        put:            'Put',
+    },
     patterns: {
         email: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
         lowercase:      /[a-z]+/,
         number:         /[0-9]+/,
         uppercase:      /[A-Z]+/,
+    },
+    url: {      
+        mbtiAdd:        'api/MBTI/add',
+        mbtiGet:        'api/MBTI',
+        mbtiGetGenders: 'api/MBTI/getGenders',
+        mbtiGetNF:      'api/MBTI/getNF',
+        mbtiGetNT:      'api/MBTI/getNT',
+        mbtiGetSJ:      'api/MBTI/getSJ',
+        mbtiGetSP:      'api/MBTI/getSP',
+        mbtiGetTypes:   'api/MBTI/getMbtiTypes',
+        mbtiHide:       'api/MBTI/hide',
     },
     user: {
         addFailure:     'Could not add ',
