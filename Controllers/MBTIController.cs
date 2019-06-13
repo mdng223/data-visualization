@@ -1,3 +1,5 @@
+
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,72 +8,101 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Networth.Services;
 using Networth.Models;
-using Networth.Entities.Mbti;
 using Networth.Entities.MbtiUser;
 using Networth.Entities.Gender;
 
 /*
-    
+    * Create a temperament table
+    * Create a mbti table with name and symbol
+    * Create a person table: email, first name, last name (optional), gender, birthday (optional)
+    * Create a gender table
     * Add strings to constants page
  */
 namespace Networth.Controllers
 {
     [ApiController]
-    public class MbtiController : Controller
+    public class MBTIController : Controller
     {
         private NetworthDbContext _context;
-        public MbtiController(NetworthDbContext context) {
+        public MBTIController(NetworthDbContext context) {
             _context = context;
         }
 
-        [HttpPost("api/[controller]")]
-        public JsonResult AddMbti(MbtiUser mbtiUser) {
+        [HttpPost("api/[controller]/add")]
+        public JsonResult AddMbti(MbtiUser mbti) {
             bool status = false;
             string message = "";
-            string firstName = "";
-            string lastName = "";
-            string type = "";
             try {
-                type = _context.Mbti.FirstOrDefault(mbti => mbti.Id == mbtiUser.Id).Symbol;
-                message = ValidateMbti(mbtiUser);
+                message = ValidateMbti(mbti);
                 if (message.Count() == 0) {
                     status = true;
-                    firstName = mbtiUser.FirstName;
-                    lastName = mbtiUser.LastName;
-                    type = _context.Mbti.FirstOrDefault(mbti => mbti.Id == mbtiUser.Id).Symbol;
-                    _context.MbtiUser.Add(mbtiUser);
+                    _context.MbtiUser.Add(mbti);
                     _context.SaveChanges();
                 }
             } catch (Exception e) {
                 message += $"Error: Could not add new MBTI. Exception: '{e}'";
-                firstName = "Uknown";
-                lastName = "Unknown";
-                type = "Unknown";
             }
 
-            
-            return Json(new {
-                status = status,
-                message = $"'{firstName}' '{lastName}' ('{type}') successfully saved. "
-            });
+            // No errors
+            if (message.Count() == 0) {
+                status = true;
+                message = $"'{mbti.FirstName}' '{mbti.LastName}' ('{mbti.Type}') successfully saved. ";
+            }
+
+            return Json(new { status, message });
+        }
+
+        [HttpPut("api/[controller]/edit")]
+        public JsonResult EditMbti(MbtiViewModel mbti) {
+            bool status = false;
+            string message = "";
+            try {
+                MbtiUser mu =_context.MbtiUser.FirstOrDefault(m => m.Id == mbti.Id);
+                if(mu == null) {
+                    message += "User could not be found for updating.";
+                } else {
+                    mu.FirstName = mbti.FirstName;
+                    mu.LastName = mbti.LastName;
+                    mu.MbtiId = 
+                    mu.GenderId = 
+                    _context.SaveChanges();
+                }                
+            } catch (Exception e) {
+                message += $"Error: Could not edit. Exception: '{e}'";
+            }
+
+            // No errors
+            if (message.Count() == 0) {
+                status = true;
+                message = $"'{mbti.FirstName}' '{mbti.LastName}' ('{mbti.Type}') successfully edited. ";
+            }
+
+            return Json(new { status, message });
         }
 
         [HttpPut("api/[controller]/hide")]
-        public JsonResult Hide(HideModel hideModel) {
+        public JsonResult Hide(int mbtiId) {
             bool status = false;
+            string message = "";
             try {
-                MbtiUser person =_context.MbtiUser.FirstOrDefault(a => a.Id == hideModel.Id);
-                status = (person == null) ? true : false;
-                person.Hidden = true;
-                _context.SaveChanges();
+                MbtiUser mbtiUser =_context.MbtiUser.FirstOrDefault(a => a.Id == mbtiId);
+                if(mbtiUser == null) {
+                    status = false;
+                } else {
+                    message = $"'{mbtiUser.FirstName}' '{mbtiUser.LastName}' ('{mbtiUser.Type}') successfully deleted. ";
+                    mbtiUser.Hidden = true;
+                    _context.SaveChanges();
+                }                
             } catch (Exception e) {
-                Console.WriteLine($"ERROR: Could not hide. Exception: '{e}'");
-                return Json( new {
-                    status,
-                    message = "ERROR: Could not delete. Exception: " + e
-                    });
+                message += $"Error: Could not delete. Exception: '{e}'";
             }
-            return Json(hideModel.Id);
+
+            // no errors
+            if(message.Count() == 0) {
+                status = true;
+            }
+
+            return Json(new { status, message});
         }
 
         [HttpGet("api/[controller]/getGenders")]
@@ -98,14 +129,23 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]getMbtis")]
         public JsonResult getMbtis() {
-            List<MbtiUser> mbtis = new List<MbtiUser>();
+            List<MbtiViewModel> mbtis = new List<MbtiViewModel>();
             bool status = true;
             string message = "";
 
             try {
                 foreach (MbtiUser mbtiUser in _context.MbtiUser) {  
                     if (mbtiUser.Hidden == false) {
-                        mbtis.Add(mbtiUser);
+                        MbtiUser currentUser = _context.Mbti.FirstOrDefault(mbti => mbti.Id = mbtiUser.MbtiId);
+                        mbtis.Add(new MbtiViewModel(
+                            FirstName = mbtiUser.FirstName,
+                            LastName = mbtiUser.LastName,
+                            Gender = mbtiUser.Gender,
+                            Email = mbtiUser.Email,
+                            TypeName = currentUser.TypeName,
+                            Type = currentUser.TypeName,
+                        ));
+                        mbtiUsers.Add(mbtiUser);
                     }
                 }
             } catch (Exception e) {
@@ -145,9 +185,8 @@ namespace Networth.Controllers
         }
 
         [HttpGet("api/[controller]/getNF")]
-        public JsonResult getNF() {
-            List<MbtiUser> nfList = _context.MbtiUser.Where(
-                user => user.Mbti.TemperamentSymbol.Substring(1, 2) == "NF").ToList();
+        public JsonResult getNF() {            
+            List<MBTI> nfList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NF").ToList();
             Temperament temperament = new Temperament();
 
             temperament = getTemperament(nfList, "Diplomat");
@@ -162,8 +201,7 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]/getNT")]
         public JsonResult getNT() {
-            List<MbtiUser> ntList = _context.MbtiUser.Where(
-                user => user.Mbti.TemperamentSymbol.Substring(1, 2) == "NT").ToList();
+            List<MBTI> ntList = _context.MBTI.Where(mbti => mbti.Type.Substring(1, 2) == "NT").ToList();
             Temperament temperament = new Temperament();
 
             temperament = getTemperament(ntList, "Analyst");
@@ -178,10 +216,8 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]/getSJ")]
         public JsonResult getSJ() {
-            List<MbtiUser> sjList = _context.MbtiUser.Where(
-                user => user.Mbti.TemperamentSymbol[1] == 'S'
-                        && user.Mbti.TemperamentSymbol[3] == 'J'
-                ).ToList();
+            List<MBTI> sjList =  _context.MBTI.Where(mbti => mbti.Type[1] == 'S'
+                        && mbti.Type[3] == 'J').ToList();
 
             Temperament temperament = new Temperament();
             temperament = getTemperament(sjList, "Sentinel");
@@ -196,10 +232,8 @@ namespace Networth.Controllers
 
         [HttpGet("api/[controller]/getSP")]
         public JsonResult getSP() {
-            List<MbtiUser> spList = _context.MbtiUser.Where(
-                user => user.Mbti.TemperamentSymbol[1] == 'S'
-                        && user.Mbti.TemperamentSymbol[3] == 'P'
-                ).ToList();
+            List<MBTI> spList =  _context.MBTI.Where(mbti => mbti.Type[1] == 'S'
+                        && mbti.Type[3] == 'P').ToList();
             Temperament temperament = new Temperament();
 
             temperament = getTemperament(spList, "Explorer");
@@ -212,24 +246,21 @@ namespace Networth.Controllers
             return Json(temperament);
         }
 
-        private MbtiType getMbtiType(string mbtiName, string mbtiType, List<MbtiUser> subTemperamentList) {
+        private MbtiType getMbtiType(string mbtiName, string mbtiType, List<MBTI> subTemperamentList) {
             // make sure mbtiName and mbtiType exist
             // if not return uknown for all the objects
             MbtiType MbtiType = new MbtiType();
-            double total = _context.Mbti.Count();
-            int mbtiId = _context.Mbti.FirstOrDefault(mbti => mbti.Symbol == mbtiType).Id;
+            double total = _context.MBTI.Count();
 
             MbtiType.name = mbtiName;
-            MbtiType.total = subTemperamentList.Where(mbti => mbti.MbtiId == mbtiId).Count();
+            MbtiType.total = subTemperamentList.Where(mbti => mbti.Type == mbtiType).Count();
             MbtiType.totalPercentage = (double)MbtiType.total / total * 100;
             return MbtiType;
         }
 
-        private Temperament getTemperament(List<MbtiUser> subTemperamentList, string temperamentName) {
+        private Temperament getTemperament(List<MBTI> subTemperamentList, string temperamentName) {
             Temperament temperament = new Temperament();
-            double total = _context.MbtiUser.Count();
-            int maleId = _context.Gender.FirstOrDefault(g => g.Type == "Male").Id;
-            int femaleId = _context.Gender.FirstOrDefault(g => g.Type =="Female").Id;
+            double total = _context.MBTI.Count();
             // Check list existence
             if (subTemperamentList.Count < 0 ) {
                 Console.WriteLine("ERROR: Sub temperament list is empty.");
@@ -241,8 +272,8 @@ namespace Networth.Controllers
             }
 
             temperament.name = temperamentName;
-            temperament.maleCount = subTemperamentList.Where(mbti => mbti.GenderId == maleId).Count();
-            temperament.femaleCount = subTemperamentList.Where(mbti => mbti.GenderId == femaleId).Count();
+            temperament.maleCount = subTemperamentList.Where(mbti => mbti.Gender == "M").Count();
+            temperament.femaleCount = subTemperamentList.Where(mbti => mbti.Gender == "F").Count();
             temperament.total = subTemperamentList.Count();
             temperament.totalPercentage = (double)subTemperamentList.Count() / total * 100;
 
@@ -271,35 +302,40 @@ namespace Networth.Controllers
             });
         }
 
-        private string ValidateMbti(MbtiUser mbtiUser){
+        private string ValidateMbti(MBTI mbti){
             string message = "";
             int errorCount = 0;
 
             // CHCEK LENGTH OF FIRST NAME
-            if (mbtiUser.FirstName.Count() > 50) {
+            if (mbti.FirstName.Count() > 50) {
                 errorCount += 1;
-                message += $"'{errorCount}'. First name ('{mbtiUser.FirstName.Count()}') cannot be greater than 50 chars in length. ";
-            } else if (mbtiUser.FirstName.Count() == 0) {
+                message += $"'{errorCount}'. First name ('{mbti.FirstName.Count()}') cannot be greater than 50 chars in length. ";
+            } else if (mbti.FirstName.Count() == 0) {
                 errorCount += 1;
-                message += $"'{errorCount}'. First name ('{mbtiUser.FirstName.Count()}') needs to be atleast 1 char long in length. ";
+                message += $"'{errorCount}'. First name ('{mbti.FirstName.Count()}') needs to be atleast 1 char long in length. ";
             }
             // CHECK LENGTH OF LAST NAME
-            if (mbtiUser.LastName.Count() > 50) {
+            if (mbti.LastName.Count() > 50) {
                 errorCount +=1;
-                message += $"'{errorCount}'. Last name ('{mbtiUser.FirstName.Count()}') cannot be greater than 50 chars in length. ";
-            } else if (mbtiUser.LastName.Count() == 0) {
+                message += $"'{errorCount}'. Last name ('{mbti.FirstName.Count()}') cannot be greater than 50 chars in length. ";
+            } else if (mbti.LastName.Count() == 0) {
                 errorCount += 1;
-                message += $"'{errorCount}'. Last name ('{mbtiUser.FirstName.Count()}') needs to be atleast 1 char long in length. ";
+                message += $"'{errorCount}'. Last name ('{mbti.FirstName.Count()}') needs to be atleast 1 char long in length. ";
             }
             // CHECK IF TYPE EXISTS in db
-            if (!_context.Mbti.Any(mbti => mbti.Id == mbtiUser.MbtiId)) {
+            if (!_context.Mbti.Any(mbti => mbti.Name == mbti.Type)) {
                 errorCount += 1;
-                message += $"'{errorCount}'. Type does not exist in database. ";
+                message += $"'{errorCount}'. Type ('{mbti.Type}') does not exist in database. ";
+            }
+            // CHECK IF TEMPERAMENT EXISTS in db
+            if (!_context.Mbti.Any(mbti => mbti.Temperament == mbti.Temperament)){
+                errorCount += 1;
+                message += $"'{errorCount}'. Temperament ('{mbti.Temperament}') does not exist in database. ";
             }
             // CHECK IF GENDER EXISTS in db
-            if (!_context.Gender.Any(gender => gender.Id == mbtiUser.GenderId)) {
+            if (!_context.Gender.Any(gender => gender.Type == mbti.Gender)) {
                 errorCount += 1;
-                message += $"'{errorCount}'. Gender ('{mbtiUser.Gender}') does not exist in database. ";
+                message += $"'{errorCount}'. Gender ('{mbti.Gender}') does not exist in database. ";
             }
             return message;
         }

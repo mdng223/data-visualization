@@ -1,9 +1,10 @@
 import Constants from '../services/constants.js'
 import Requests from '../services/requests.js'
 import Common from '../services/common.js'
+import Requests from './requests.js';
 
 export default{
-    name: 'user-table',
+    name: 'mbti-table',
     data: function() {
         return {
           dialog: false,
@@ -40,41 +41,55 @@ export default{
                             !!value
                             || Constants.common.required,
           },
-          types: ['ENTJ', 'INTJ', 'ENTP', 'INTP',
-                  'ENFP', 'INFP', 'ENFJ', 'INFJ',
-                  'ESTJ', 'ISTJ', 'ESFJ', 'ISFJ',
-                  'ESTP', 'ISTP', 'ESFP', 'ISFP'],
+          types: [],
         }
     },
     methods: {
       close() {
         this.dialog = false;
         this.editedIndex = -1;
+        Common.clearObject(this.edited);
       },
+      /**
+       * This will populate the dialog forms with the current
+       * item if it exists. Otherwise, it will output an error.
+       * @param {object} item 
+       */
       edit(item) {
-        console.log(item)
-        this.dialog = true;
-        this.edited =  item;
-        this.editedIndex = this.edited.id;
-      },
-      hide(id) {
-        for (var index in this.mbtis){
-          if (id == this.mbtis[index].id) {
-            confirm(Constants.user.deleteUser) && this.mbtis.splice(index, 1);
-            let data = {
-              'id': id
-            }
-            Requests.mbti.delete(data);
-            return;
-          }
+        if (this.mbtis.includes(item)) {
+            this.dialog = true;
+            this.edited = item;
+            this.editedIndex = this.edited.id;
+        } else {
+            that.snackbar.color = Constants.color.red;
+            that.snackbar.text = Constants.common.editFailure;
+            that.snackbar.state = true;
         }
       },
-      save(){
+      /**
+       * This will send a request to server to try to hide an mbti.
+       * It will send -1 to the server if id cannot be found.
+       * @param {int} id
+       */
+      hide(id) {
+        let data = {
+            id: -1
+        };
 
+        if (Common.doesIdExist(Number(id), this.mbtis)){
+            confirm(Constants.user.deleteUser) && this.mbtis.splice(index, 1);
+            data.id = id;
+        }
+        Requests.mbti.hide(data);
+      },
+      save(){
+        Requests.mbti.add(this.edited);
       },
     },
     mounted()  {
         Requests.mbti.get(this);
+        Requests.mbti.getGenders(this);
+        Requests.mbti.getMbtiTypes(this);
     },
     template: `
     <div>
@@ -83,8 +98,6 @@ export default{
         <v-toolbar flat color="white">
           <v-toolbar-title>MBTI</v-toolbar-title>
           <v-spacer></v-spacer>
-
-
           <v-divider class="mx-2" inset vertical></v-divider>
           <v-text-field
             v-model="search"
@@ -100,18 +113,15 @@ export default{
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark class="mb-2" v-on="on">New MBTI</v-btn>
         </template>
-
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
           </v-card-title>
         <v-card-text>
-
             <v-container grid-list-md>
               <v-layout wrap>
 <!-- EDIT USER -->
                 <template v-if='editedIndex > -1'>
-
                   <v-flex xs12 sm6 md12>
                     <v-text-field 
                     v-model="edited.firstName"
@@ -120,7 +130,6 @@ export default{
                     clearable                    
                     ></v-text-field>
                   </v-flex>
-
                   <v-flex xs12 sm6 md12>
                     <v-text-field 
                     v-model="edited.lastName"
@@ -130,7 +139,6 @@ export default{
                     
                     ></v-text-field>
                   </v-flex>
-
                   <v-flex xs12 sm6 md12>
                     <v-overflow-btn
                       :items="genders"
@@ -140,7 +148,6 @@ export default{
                       v-model="edited.gender"
                     ></v-overflow-btn>
                   </v-flex>
-
                   <v-flex xs12 sm6 md12>
                     <v-overflow-btn
                       :items="types"
@@ -151,9 +158,8 @@ export default{
                     ></v-overflow-btn>
                   </v-flex>
                 </template>
-
 <!-- ADD USER -->
-                <template v-else>
+              <template v-else>
                 <v-flex xs12 sm6 md12>
                   <v-text-field 
                     v-model="edited.firstName"
@@ -162,7 +168,6 @@ export default{
                     clearable                    
                   ></v-text-field>
                 </v-flex>
-
                 <v-flex xs12 sm6 md12>
                   <v-text-field 
                   v-model="edited.lastName"
@@ -172,7 +177,6 @@ export default{
                   
                   ></v-text-field>
                 </v-flex>
-
                 <v-flex xs12 sm6 md12>
                   <v-overflow-btn
                     :items="genders"
@@ -182,7 +186,6 @@ export default{
                     v-model="edited.gender"
                   ></v-overflow-btn>
                 </v-flex>
-
                 <v-flex xs12 sm6 md12>
                   <v-overflow-btn
                     :items="types"
@@ -192,12 +195,11 @@ export default{
                     v-model="edited.type"
                   ></v-overflow-btn>
                 </v-flex>
-                </template>
+              </template>
                                    
-                  </v-layout>
-                </v-container>
+            </v-layout>
+          </v-container>
               </v-card-text>
-
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn flat color="blue-grey" @click="close">
@@ -212,21 +214,17 @@ export default{
             </v-card>
             </v-dialog>
           </v-toolbar>
-
         <v-app>
           <v-data-table 
             :headers="headers"
             :items="mbtis"
             :search="search"
             class="elevation-1">
-
             <template v-slot:no-data>
                 <v-alert :value="true" color="error" icon="warning">
                 Sorry, nothing to display here :(
                 </v-alert>
             </template>
-
-
             <template v-slot:items="props">
               <td>{{ props.item.firstName }}</td>
               <td> {{ props.item.lastName }}</td>

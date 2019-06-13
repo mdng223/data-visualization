@@ -2,8 +2,8 @@ import BankPage from './pages/bankPage.js'
 import Home from './pages/homePage.js'
 import LoanPage from './pages/loanPage.js'
 import PositionPage from './pages/positionPage.js'
-import MBTIPage from './pages/MBTIPage.js'
-import MBTIStats from './pages/MBTIStats.js'
+import MbtiPage from './pages/MbtiPage.js'
+import MbtiStats from './pages/MbtiStats.js'
 import NotFound from './pages/notFound.js'
 import UserPage from './pages/userPage.js'
 
@@ -12,8 +12,8 @@ const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/banks', name: 'Banks', component: BankPage },
   { path: '/loans', name: 'Loans', component: LoanPage },
-  { path: '/mbti', name: 'MBTI', component: MBTIPage },
-  { path: '/mbtistats', name: 'MBTIStats', component: MBTIStats},
+  { path: '/mbti', name: 'MBTI', component: MbtiPage },
+  { path: '/mbtistats', name: 'MbtiStats', component: MBTIStats},
   { path: '/positions', name: 'Positions', component: PositionPage },
   { path: '/users',
     name: 'Users', 

@@ -13,27 +13,35 @@ export default {
   mbti: {
     add (data) {
       axios({
-      method: Constants.method.post,
-      url: Constants.url.mbtiAdd,
-      data: JSON.stringify(data),
-      headers:{'Content-Type': Constants.common.contentTypeValue},
+        method: Constants.method.post,
+        url: Constants.url.mbtiAdd,
+        data: JSON.stringify(data),
+        headers:{'Content-Type': Constants.common.contentTypeValue},
       })
       .then(function (response) {
-        if (response.data.status) {
-          that.snackbar.text = `${Constants.common.addSuccess} ${response.data.user}`;
-          that.snackbar.color = Constants.color.success;
-          that.snackbar.state = true;
-        } else {
-          that.snackbar.text = outputError(response.data.message);
-          that.snackbar.color = Constants.color.red;
-          that.snackbar.state = true;
-        }
+        that.snackbar.color = response.data.status ? Constants.color.success : Constants.color.red;
+        that.snackbar.text = response.data.message;
+        that.snackbar.state = true;
       })
       .catch(function (error) {
         console.log(error);
       })
     },
-    delete(data) {
+    edit: function(data) {
+      axios({
+        method: Constants.method.put,
+        url: Constants.url.mbtiEdit,
+        data: data,
+        headers:{'Content-Type': 'application/json; charset=utf-8'},
+      })
+      .then(function (response) {
+        that.snackbar.color = response.data.status ? Constants.color.success : Constants.color.red;
+        that.snackbar.text = response.data.message;
+        that.snackbar.state = true;
+      })
+      .catch(error => (console.log(error)));
+    },
+    hide(data) {
       axios({
         method: Constants.method.put,
         url: Constants.url.mbtiHide,
@@ -41,15 +49,9 @@ export default {
         headers:{'Content-Type': Constants.common.contentTypeValue},
       })
       .then(function (response) {
-        if (response.data.status) {
-          that.snackbar.text = `${Constants.common.deleteSuccess} ${response.data.user}`;
-          that.snackbar.color = Constants.color.success;
-          that.snackbar.state = true;
-        } else {
-          that.snackbar.text = outputError(response.data.message);
-          that.snackbar.color = Constants.color.red;
-          that.snackbar.state = true;
-        }
+        that.snackbar.color = response.data.status ? Constants.color.success : Constants.color.red;
+        that.snackbar.text = response.data.message;
+        that.snackbar.state = true;
       })
       .catch(error => (console.log(error)));
     },
@@ -59,20 +61,20 @@ export default {
         if (response.data.status) {
           that.mbtis = response.data.mbtiList;
         } else {
-          that.snackbar.text = outputError(response.data.message);
+          that.snackbar.text = response.data.message;
           that.snackbar.color = Constants.color.red;
           that.snackbar.state = true;
         }
       })
       .catch(error => (console.log(error)));
     },
-    getGenders (that) {
+    getGenders(that) {
       axios.get(Constants.url.mbtiGetGenders)
       .then((response) => {
         if (response.data.status) {
           that.genders = response.data.genders;
         } else {
-          console.log(outputError(response.data.message));
+          console.log(response.data.message);
         }
       })
       .catch(error => (console.log(error)));
@@ -83,7 +85,7 @@ export default {
         if (response.data.status) {
           that.mbtis = response.data.mbtis.temperaments;
         } else {
-          console.log(outputError(response.data.message));
+          console.log(response.data.message);
         }
       })
       .catch(error => (console.log(error)));
